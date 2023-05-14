@@ -1,25 +1,25 @@
 ---
-
 ---
 
-<canvas id="snakes" class="full-screen" />
+<canvas id="snakes" class="full-screen"></canvas>
 
 <style>
-    .full-screen {
-        position: fixed;
-        inset: 0;
-    }
+  .full-screen {
+    position: fixed;
+    inset: 0;
+  }
 </style>
 
 <script>
-    import {Grid} from "./Grid";
-    import {gridOptions} from "./GridOptions";
+  import { gridOptions } from "./GridOptions";
 
-    // addEventListener('load', () => {
-        const htmlElement = document.getElementById('snakes');
+  addEventListener("load", async () => {
+    const htmlElement = document.getElementById("snakes");
 
-        if (htmlElement instanceof HTMLCanvasElement) {
-            new Grid(htmlElement, gridOptions).init();
-        }
-    // })
+    const { Grid } = await import("./Grid.js");
+
+    if (htmlElement instanceof HTMLCanvasElement) {
+      new Grid(htmlElement, gridOptions).init().start();
+    }
+  });
 </script>

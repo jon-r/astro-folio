@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 
 import react from "@astrojs/react";
 
@@ -8,8 +8,8 @@ export default defineConfig({
   vite: {
     server: {
       watch: {
-        ignored: ['**/.idea/**']
-      }
-    }
-  }
+        ignored: ["**/.idea/**"],
+      },
+    },
+  },
 });

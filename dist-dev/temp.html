@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DEBUG</title>
+    <style>
+      .full-screen {
+        position: fixed;
+        inset: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="snakes" class="full-screen"></canvas>
+  </body>
+  <script>
+    const exports = {};
+  </script>
+  <script>
+    window.addEventListener("load", async () => {
+      const htmlElement = document.getElementById("snakes");
+      const gridOptions = {
+        rectHeight: 10,
+        rectWidth: 10,
+        gridSpacing: 1,
+        snakeSpeedMs: 400,
+        maxSnakes: 10,
+        snakeStartingLength: 10,
+      };
+
+      if (htmlElement instanceof HTMLCanvasElement) {
+        const { Grid } = await import("./components/SnakeBackground/Grid.js");
+
+        const grid = new Grid(htmlElement, gridOptions);
+
+        grid.init();
+      }
+    });
+  </script>
+</html>
