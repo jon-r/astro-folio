@@ -1,10 +1,9 @@
 import { debounce } from "../../util/generics.js";
 import { GridNode, GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
-import {SnakeColours} from "./constants.js";
+import { SnakeColours } from "./constants.js";
 import { Ticker } from "./Ticker.js";
-import { Snake } from "./Snake.js";
-import {randomFrom} from "../../util/number.js";
+import { Snakes } from "./Snakes.js";
 
 type GridProps = GridOptions;
 
@@ -14,12 +13,11 @@ export class Grid {
   readonly #props: GridProps;
   readonly #squareBase: Path2D;
   readonly #ticker: Ticker;
+  readonly #snakes: Snakes;
 
   #nodeProps: GridNodeProps = { rows: 0, cols: 0 };
   #gridNodes: GridNode[] = [];
   #starterNodes: GridNode[] = [];
-  #snakes: Snake[] = [];
-  #nextSnakeId: number = 0;
 
   constructor(element: HTMLCanvasElement, props: GridProps) {
     const { gridSpacing, rectHeight, rectWidth } = props;
@@ -28,6 +26,10 @@ export class Grid {
     this.#ctx = element.getContext("2d", { alpha: false })!;
     this.#props = props;
     this.#ticker = new Ticker({ interval: props.snakeSpeedMs });
+    this.#snakes = new Snakes({
+      snakeStartingLength: props.snakeStartingLength,
+      maxSnakes: props.maxSnakes,
+    });
 
     const path = new Path2D();
     path.rect(
@@ -48,65 +50,23 @@ export class Grid {
 
   start() {
     console.log("started");
-    
+
     this.#ticker.play();
   }
 
   #handleTick = () => {
-    if (this.#snakes.length < this.#props.maxSnakes) {
-      this.#addNewSnake();
-    }
+    // todo move both to a single function? or split in parts in the child class
+    this.#snakes.addNewSnake(this.#starterNodes);
 
-    this.#controlSnakes();
-  };
-
-  #addNewSnake() {
-    this.#nextSnakeId = (this.#nextSnakeId + 1) % this.#props.maxSnakes;
-
-    this.#snakes.push(
-      new Snake({
-        startingNode: randomFrom(this.#starterNodes),
-        startingLength: this.#props.snakeStartingLength,
-        id: String(this.#nextSnakeId),
-      })
+    const rendered = this.#snakes.controlSnakes(
+      this.#nodeProps,
+      this.#starterNodes
     );
-  }
-
-  #controlSnakes() {
-    const rendered: Record<SnakeColours, GridNode[]> = {
-      [SnakeColours.Background]: [],
-      [SnakeColours.Head]: [],
-      [SnakeColours.Body]: [],
-      [SnakeColours.Tail]: [],
-    };
-    const activeNodes: GridNode[] = [];
-
-    this.#snakes.forEach((snake) => {
-      snake.moveSnake(this.#nodeProps);
-      
-      const snakeParts = snake.getSnakeAsParts();
-      
-      if (snakeParts.head) {
-        rendered[SnakeColours.Background].push(snakeParts.head);
-      }
-      
-      rendered[SnakeColours.Background].push(...snakeParts.end);
-      rendered[SnakeColours.Body].push(...snakeParts.body);
-      rendered[SnakeColours.Tail].push(...snakeParts.tail);
-      activeNodes.push(...snakeParts.body, ...snakeParts.tail);
-    });
 
     Object.entries(rendered).forEach(([color, nodes]) => {
-      this.#renderNodes(nodes, color)
+      this.#renderNodes(nodes, color);
     });
-
-    this.#snakes.forEach(snake => {
-      // todo have it go off the opposite side if it hits a wall
-      snake.handleCollisions([...activeNodes, ...this.#starterNodes]);
-    })
-
-    this.#snakes = [...this.#snakes].filter(snake => !snake.isDead);
-  }
+  };
 
   #handleResize = () => {
     const { innerHeight, innerWidth } = window;
@@ -114,10 +74,7 @@ export class Grid {
     this.#element.height = innerHeight;
     this.#setupGridNodes(innerWidth, innerHeight);
 
-    this.#renderNodes(
-      this.#gridNodes.filter((n) => n.startDirection === null),
-      SnakeColours.Background
-    );
+    this.#renderNodes(this.#gridNodes, SnakeColours.Background);
 
     this.start();
   };
@@ -135,10 +92,7 @@ export class Grid {
     const colArr = new Array(cols).fill(0);
     const rowArr = new Array(rows).fill(0);
 
-    const nodeOptions: GridNodeProps = {
-      rows,
-      cols,
-    };
+    const nodeOptions: GridNodeProps = { rows, cols };
 
     colArr.forEach((_, x) => {
       rowArr.forEach((__, y) => {
@@ -147,7 +101,9 @@ export class Grid {
     });
 
     this.#gridNodes = gridNodes;
-    this.#starterNodes =  gridNodes.filter((node) => node.startDirection !== null)
+    this.#starterNodes = gridNodes.filter(
+      (node) => node.startDirection !== null
+    );
     this.#nodeProps = nodeOptions;
   }
 
