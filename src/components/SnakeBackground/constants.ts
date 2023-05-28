@@ -1,4 +1,3 @@
-// order is important here to go clockwise
 import type { GridPoint } from "./GridNode.js";
 
 export enum GridDirection {
@@ -8,23 +7,14 @@ export enum GridDirection {
   Left,
 }
 
-export const ALL_DIRECTIONS: number[] =
-  Object.values(GridDirection).map(Number);
-
-export enum GridColours {
+export enum SnakeColours {
   Background = "#111",
-  Up = "#0f0",
-  Right = "#f00",
-  Down = "#ff0",
-  Left = "#00f",
-
   Tail = "#066",
   Body = "#0cc",
-  Head = "#0ee",
+  Head = "#0ff",
 }
 
-// definitely a better way of calculating this - think the enum values make it work? check OG code
-export const possibleDirectionsList: Record<
+export const POSSIBLE_DIRECTIONS: Record<
   GridDirection,
   [GridDirection, GridDirection, GridDirection]
 > = {

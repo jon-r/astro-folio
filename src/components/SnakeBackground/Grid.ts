@@ -1,9 +1,10 @@
-import { debounce, randomFrom } from "../../util/generics.js";
+import { debounce } from "../../util/generics.js";
 import { GridNode, GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
-import { GridColours, GridDirection } from "./constants.js";
+import {SnakeColours} from "./constants.js";
 import { Ticker } from "./Ticker.js";
 import { Snake } from "./Snake.js";
+import {randomFrom} from "../../util/number.js";
 
 type GridProps = GridOptions;
 
@@ -16,7 +17,9 @@ export class Grid {
 
   #nodeProps: GridNodeProps = { rows: 0, cols: 0 };
   #gridNodes: GridNode[] = [];
+  #starterNodes: GridNode[] = [];
   #snakes: Snake[] = [];
+  #nextSnakeId: number = 0;
 
   constructor(element: HTMLCanvasElement, props: GridProps) {
     const { gridSpacing, rectHeight, rectWidth } = props;
@@ -45,7 +48,7 @@ export class Grid {
 
   start() {
     console.log("started");
-    const startPoints = this.#gridNodes.filter((node) => node.startDirection);
+    
     this.#ticker.play();
   }
 
@@ -58,39 +61,51 @@ export class Grid {
   };
 
   #addNewSnake() {
-    const startingNodes = this.#gridNodes.filter((node) => node.startDirection);
+    this.#nextSnakeId = (this.#nextSnakeId + 1) % this.#props.maxSnakes;
 
     this.#snakes.push(
       new Snake({
-        startingNode: randomFrom(startingNodes),
+        startingNode: randomFrom(this.#starterNodes),
         startingLength: this.#props.snakeStartingLength,
+        id: String(this.#nextSnakeId),
       })
     );
   }
 
   #controlSnakes() {
-    // todo fix types. use enum/record for color
-    const rendered = {
-      [GridColours.Head]: [] as GridNode[],
-      [GridColours.Body]: [] as GridNode[],
-      [GridColours.Tail]: [] as GridNode[],
-      [GridColours.Background]: [] as GridNode[],
+    const rendered: Record<SnakeColours, GridNode[]> = {
+      [SnakeColours.Background]: [],
+      [SnakeColours.Head]: [],
+      [SnakeColours.Body]: [],
+      [SnakeColours.Tail]: [],
     };
+    const activeNodes: GridNode[] = [];
 
     this.#snakes.forEach((snake) => {
       snake.moveSnake(this.#nodeProps);
-
-      const snakeParts = snake.getSnakeParts();
-
-      rendered[GridColours.Head].push(snakeParts.head);
-      rendered[GridColours.Body].push(...snakeParts.body);
-      // rendered[GridColours.Tail].push(...snakeParts.tail);
-      // rendered[GridColours.Background].push(...snakeParts.gone);
+      
+      const snakeParts = snake.getSnakeAsParts();
+      
+      if (snakeParts.head) {
+        rendered[SnakeColours.Background].push(snakeParts.head);
+      }
+      
+      rendered[SnakeColours.Background].push(...snakeParts.end);
+      rendered[SnakeColours.Body].push(...snakeParts.body);
+      rendered[SnakeColours.Tail].push(...snakeParts.tail);
+      activeNodes.push(...snakeParts.body, ...snakeParts.tail);
     });
 
-    Object.entries(rendered).forEach(([colour, nodes]) =>
-      this.#renderNodes(nodes, colour as GridColours)
-    );
+    Object.entries(rendered).forEach(([color, nodes]) => {
+      this.#renderNodes(nodes, color)
+    });
+
+    this.#snakes.forEach(snake => {
+      // todo have it go off the opposite side if it hits a wall
+      snake.handleCollisions([...activeNodes, ...this.#starterNodes]);
+    })
+
+    this.#snakes = [...this.#snakes].filter(snake => !snake.isDead);
   }
 
   #handleResize = () => {
@@ -99,26 +114,9 @@ export class Grid {
     this.#element.height = innerHeight;
     this.#setupGridNodes(innerWidth, innerHeight);
 
-    // temp
     this.#renderNodes(
       this.#gridNodes.filter((n) => n.startDirection === null),
-      GridColours.Background
-    );
-    this.#renderNodes(
-      this.#gridNodes.filter((n) => n.startDirection === GridDirection.Up),
-      GridColours.Up
-    );
-    this.#renderNodes(
-      this.#gridNodes.filter((n) => n.startDirection === GridDirection.Right),
-      GridColours.Right
-    );
-    this.#renderNodes(
-      this.#gridNodes.filter((n) => n.startDirection === GridDirection.Down),
-      GridColours.Down
-    );
-    this.#renderNodes(
-      this.#gridNodes.filter((n) => n.startDirection === GridDirection.Left),
-      GridColours.Left
+      SnakeColours.Background
     );
 
     this.start();
@@ -149,10 +147,11 @@ export class Grid {
     });
 
     this.#gridNodes = gridNodes;
+    this.#starterNodes =  gridNodes.filter((node) => node.startDirection !== null)
     this.#nodeProps = nodeOptions;
   }
 
-  #renderNodes(nodes: GridNode[], colour: GridColours) {
+  #renderNodes(nodes: GridNode[], colour: string) {
     const renderedPath = new Path2D();
     const { rectHeight, rectWidth } = this.#props;
 

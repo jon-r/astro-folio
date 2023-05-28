@@ -6,7 +6,7 @@ interface DebouncedCallback extends Callback {
   cancel?: () => void;
 }
 
-export interface DebounceOptions {
+interface DebounceOptions {
   leading?: boolean;
 }
 
@@ -33,25 +33,6 @@ export function debounce(
   return debounced;
 }
 
-export function randomFrom<T>(list: T[]): T {
-  const rng = Math.floor(Math.random() * list.length);
-
-  return list.at(rng) || randomFrom(list);
-}
-
-export function biasedRNG<T>(
-  arr: T[],
-  biasedIndex: number,
-  biasedMultiplier: number
-): T {
-  const biasedArr = [...arr];
-  const boosted = arr[biasedIndex];
-
-  let n = 0;
-  while (n < biasedMultiplier && boosted) {
-    biasedArr.push(boosted);
-    n += 1;
-  }
-
-  return randomFrom(biasedArr);
+export function isNotUndefined<T>(item: T | undefined): item is T {
+  return typeof item !== "undefined";
 }
