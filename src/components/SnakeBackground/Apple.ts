@@ -5,8 +5,7 @@ interface AppleProps {
 }
 export class Apple {
   readonly #props: AppleProps;
-
-  id: string;
+  readonly id: string;
 
   constructor(props: AppleProps) {
     this.#props = props;

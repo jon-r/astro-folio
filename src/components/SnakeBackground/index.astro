@@ -13,13 +13,15 @@
 <script>
   import { gridOptions } from "./GridOptions";
 
-  addEventListener("load", async () => {
+  window.addEventListener("load", async () => {
     const htmlElement = document.getElementById("snakes");
 
     const { Grid } = await import("./Grid.js");
 
     if (htmlElement instanceof HTMLCanvasElement) {
-      new Grid(htmlElement, gridOptions).init().start();
+      new Grid(htmlElement, gridOptions).init();
     }
+
+    // todo pause button. maybe render it with the init()???
   });
 </script>

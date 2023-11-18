@@ -9,11 +9,11 @@ export enum GridDirection {
 
 export const enum SnakeColours {
   Background = "#111",
-  Tail = "#066",
-  Body = "#0cc",
-  Head = "#0ff",
+  Tail = "#022",
+  Body = "#044",
+  Head = "#066",
 }
-export const APPLE_COLOUR = "#de32e5";
+export const APPLE_COLOUR = "#530356";
 
 export const POSSIBLE_DIRECTIONS: Record<
   GridDirection,

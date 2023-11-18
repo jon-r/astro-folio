@@ -1,6 +1,5 @@
 interface TickerProps {
   interval: number;
-  // tickCount: number;
 }
 
 export class Ticker extends EventTarget {
@@ -16,8 +15,6 @@ export class Ticker extends EventTarget {
   }
 
   play() {
-    console.log("begin");
-
     this.#isPaused = false;
     this.#loop(0);
   }

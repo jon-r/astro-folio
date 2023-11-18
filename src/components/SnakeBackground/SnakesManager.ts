@@ -6,10 +6,7 @@ import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 import { Snake } from "./Snake.js";
 
 interface SnakesProps extends MaybeSpawnProps {
-  // starterNodes: GridNode[];
-  // spawnChance: number;
   snakeStartingLength: number;
-  // maxSnakes: number;
 }
 
 export class SnakesManager extends MaybeSpawn {
@@ -17,7 +14,7 @@ export class SnakesManager extends MaybeSpawn {
 
   #snakes: Snake[] = [];
   #nodeProps: GridNodeProps = { rows: 0, cols: 0 };
-  #nextSnakeId: number = 0;
+  #nextSnakeId = 0;
 
   activeNodes: GridNode[] = [];
 
@@ -79,7 +76,7 @@ export class SnakesManager extends MaybeSpawn {
       const snakeParts = snake.getSnakeAsParts();
 
       if (snakeParts.head) {
-        const colour = SnakeColours.Body;
+        const colour = snake.isDying ? SnakeColours.Body : SnakeColours.Head;
         rendered[colour].push(snakeParts.head);
       }
 
@@ -107,10 +104,6 @@ export class SnakesManager extends MaybeSpawn {
         const newPosition = this.#getOppositeStartingPoint(edgeCollision, starterNodes);
 
         if (newPosition) {
-          console.log("respawning snake");
-          // stops snakes respawning too small if the collide as they are going off the edge of the page
-          // const startingLength = Math.max(snake.getMaxLength(), this.#props.snakeStartingLength);
-
           this.#spawnSnake(newPosition, snake.getFullLength());
         }
       }

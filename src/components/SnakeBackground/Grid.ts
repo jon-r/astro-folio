@@ -56,13 +56,10 @@ export class Grid {
   }
 
   start() {
-    console.log("started");
-
     this.#ticker.play();
   }
 
   togglePause() {
-    console.log("paused");
     this.#ticker.toggle();
   }
 
@@ -152,5 +149,3 @@ export class Grid {
     });
   }
 }
-
-// (window as any).TempGrid = Grid;

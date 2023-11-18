@@ -1,21 +1,16 @@
+import { debugToConsole } from "../../util/logger.js";
 import { randomFrom } from "../../util/number.js";
 import { Apple } from "./Apple.js";
 import type { GridNode } from "./GridNode.js";
 import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 
-interface ApplesManagerProps extends MaybeSpawnProps {
-  // spawnChance: number;
-}
+interface ApplesManagerProps extends MaybeSpawnProps {}
 
 export class ApplesManager extends MaybeSpawn {
-  // #props: ApplesManagerProps;
-
   apples: Apple[] = [];
 
   constructor(props: ApplesManagerProps) {
     super(props);
-
-    // this.#props = props;
   }
   maybeAddNewApple(allNodes: GridNode[], usedNodes: GridNode[]) {
     if (!this.maybeSpawn(this.apples)) {
@@ -36,7 +31,7 @@ export class ApplesManager extends MaybeSpawn {
   }
 
   destroyApple(point: string) {
-    console.log(`Apple ${point} eaten!`);
+    debugToConsole.log(`Apple ${point} eaten!`);
     this.apples = [...this.apples].filter(apple => apple.id !== point);
   }
 }

@@ -3,11 +3,11 @@ import { gridDirectionVector, POSSIBLE_DIRECTIONS } from "./constants.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
 
 import { isNotUndefined } from "../../util/generics.js";
+import { debugToConsole } from "../../util/logger.js";
 import { addVectors, biasedRNG } from "../../util/number.js";
 import type { ApplesManager } from "./ApplesManager.js";
 
 interface SnakeProps {
-  // id: string;
   startingNode: GridNode;
   startingLength: number;
   targetLength: number;
@@ -39,7 +39,7 @@ export class Snake {
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
 
-    console.log(
+    debugToConsole.log(
       `Snake ${snakeId} Started at ${startingNode.pointStr}. Going ${GridDirection[startingNode.startDirection!]}`,
     );
   }
@@ -58,10 +58,6 @@ export class Snake {
       tail,
       end,
     };
-  }
-
-  getFullSnake(): GridNode[] {
-    return this.#parts;
   }
 
   moveSnake(nodeProps: GridNodeProps) {
@@ -93,7 +89,7 @@ export class Snake {
     );
 
     if (snakeWillDie) {
-      console.log(`Snake ${this.snakeId} collided! at ${head?.pointStr}`);
+      debugToConsole.log(`Snake ${this.snakeId} collided! at ${head?.pointStr}`);
       this.isDying = true;
 
       return;
@@ -113,15 +109,15 @@ export class Snake {
     if (this.isDying) {
       return;
     }
+
     const head = this.#parts[0];
     const edgeHit = edgeNodes.find(node => node.pointStr === head!.pointStr);
 
     if (edgeHit) {
-      console.log(`Snake ${this.snakeId} hit Edge. Going ${GridDirection[this.#direction!]}`, edgeHit);
+      debugToConsole.log(`Snake ${this.snakeId} hit Edge. Going ${GridDirection[this.#direction!]}`, edgeHit);
     }
 
     return edgeHit;
-    // if (edgeNodes.this.#parts[0].pointStr)
   }
 
   getFullLength() {
@@ -142,7 +138,7 @@ export class Snake {
     const nextDirection = biasedRNG(possibleDirections, 1, 50);
 
     if (currentDirection !== nextDirection) {
-      console.log(
+      debugToConsole.log(
         `Snake ${this.snakeId} now going ${GridDirection[nextDirection]}`,
       );
     }
