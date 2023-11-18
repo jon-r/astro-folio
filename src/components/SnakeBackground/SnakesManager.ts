@@ -1,6 +1,6 @@
 import { randomFrom } from "../../util/number.js";
 import type { ApplesManager } from "./ApplesManager.js";
-import { SnakeColours } from "./constants.js";
+import {OPPOSITE_EDGE, SnakeColours} from "./constants.js";
 import type { GridNode, GridNodeProps } from "./GridNode.js";
 import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 import { Snake } from "./Snake.js";
@@ -32,15 +32,29 @@ export class SnakesManager extends MaybeSpawn {
       return;
     }
 
-    this.#nextSnakeId = (this.#nextSnakeId + 1) % this.#props.maxItems;
+    this.#spawnSnake(randomFrom(starterNodes), this.#props.snakeStartingLength);
+  }
+
+  #getOppositeStartingPoint(oldNode: GridNode, starterNodes: GridNode[]) {
+    if (oldNode.startDirection === null) {
+      throw new Error('collided with a non starter?')
+    }
+
+    const {direction, matchingCoordinate} = OPPOSITE_EDGE[oldNode.startDirection];
+
+    return starterNodes.find(node => node.point[matchingCoordinate] === oldNode.point[matchingCoordinate] && node.startDirection === direction);
+  }
+
+  #spawnSnake(startingNode: GridNode, targetLength: number = this.#props.snakeStartingLength) {
+    this.#nextSnakeId = (this.#nextSnakeId + 1) % (this.#props.maxItems*2);
 
     this.#snakes.push(
-      new Snake({
-        startingNode: randomFrom(starterNodes),
-        startingLength: this.#props.snakeStartingLength,
-        id: String(this.#nextSnakeId),
-      }),
-    );
+        new Snake({
+          startingNode,
+          targetLength,
+          startingLength: this.#props.snakeStartingLength,
+        }, String(this.#nextSnakeId))
+    )
   }
 
   setNodeProps(nodeProps: GridNodeProps) {
@@ -54,6 +68,7 @@ export class SnakesManager extends MaybeSpawn {
       [SnakeColours.Body]: [],
       [SnakeColours.Tail]: [],
     };
+
     const activeNodes: GridNode[] = [];
 
     this.#snakes.forEach((snake) => {
@@ -62,7 +77,7 @@ export class SnakesManager extends MaybeSpawn {
       const snakeParts = snake.getSnakeAsParts();
 
       if (snakeParts.head) {
-        const colour = snake.isDying ? SnakeColours.Body : SnakeColours.Head;
+        const colour = SnakeColours.Body;
         rendered[colour].push(snakeParts.head);
       }
 
@@ -79,11 +94,24 @@ export class SnakesManager extends MaybeSpawn {
 
   handleCollisions(starterNodes: GridNode[], apples: ApplesManager) {
     this.#snakes.forEach((snake) => {
-      // todo have it go off the opposite side if it hits a wall
+      const edgeCollision = snake.getEdgeCollision(starterNodes);
+
       snake.handleCollisions(
         [...this.activeNodes, ...starterNodes],
         apples,
       );
+
+      if (edgeCollision) {
+        const newPosition = this.#getOppositeStartingPoint(edgeCollision, starterNodes);
+
+        if (newPosition) {
+          console.log('respawning snake')
+          // stops snakes respawning too small if the collide as they are going off the edge of the page
+          // const startingLength = Math.max(snake.getMaxLength(), this.#props.snakeStartingLength);
+
+          this.#spawnSnake(newPosition, snake.getFullLength())
+        }
+      }
     });
 
     this.#snakes = [...this.#snakes].filter((snake) => !snake.isDead);

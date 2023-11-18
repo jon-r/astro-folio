@@ -11,6 +11,7 @@
   </head>
   <body>
     <canvas id="snakes" class="full-screen"></canvas>
+    <button style="position: absolute; inset: 1rem auto auto 1rem" id="pauseBtn">Pause</button>
   </body>
   <script>
     const exports = {};
@@ -24,8 +25,8 @@
         rectHeight: 12,
         rectWidth: 12,
         gridSpacing: 1,
-        snakeSpeedMs: 1000 / 10,
-        maxSnakes: 2,
+        snakeSpeedMs: 1000 / 25,
+        maxSnakes: 3,
         snakeStartingLength: 15,
         snakeSpawnChance: 40,
         appleSpawnChance: 5,
@@ -38,6 +39,10 @@
         const grid = new Grid(htmlElement, gridOptions);
 
         grid.init();
+
+        document.getElementById('pauseBtn')?.addEventListener('click', () => {
+          grid.togglePause()
+        });
       }
     });
   </script>

@@ -7,9 +7,10 @@ import { addVectors, biasedRNG } from "../../util/number.js";
 import type { ApplesManager } from "./ApplesManager.js";
 
 interface SnakeProps {
-  id: string;
+  // id: string;
   startingNode: GridNode;
   startingLength: number;
+  targetLength: number;
 }
 
 interface SnakeParts {
@@ -22,7 +23,7 @@ interface SnakeParts {
 export class Snake {
   readonly #props: SnakeProps;
 
-  #maxLength: number;
+  #targetLength: number;
   #direction: GridDirection | null;
   #parts: GridNode[];
   #iterator = 0;
@@ -30,22 +31,23 @@ export class Snake {
   isDying = false;
   isDead = false;
 
-  constructor(props: SnakeProps) {
-    const { startingLength, startingNode } = props;
+  constructor(props: SnakeProps, readonly snakeId: string) {
+    const { startingNode, targetLength } = props;
     this.#props = props;
-    this.#maxLength = startingLength;
+
+    this.#targetLength = targetLength;
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
 
     console.log(
-      `Snake ${props.id} Started at ${startingNode.pointStr}. Going ${GridDirection[startingNode.startDirection!]}`,
+      `Snake ${snakeId} Started at ${startingNode.pointStr}. Going ${GridDirection[startingNode.startDirection!]}`,
     );
   }
 
   getSnakeAsParts(): SnakeParts {
     const [...body] = this.#parts;
-    const end = body.splice(this.#maxLength);
-    const tail = body.splice(this.#maxLength - 2);
+    const end = body.splice(this.#targetLength);
+    const tail = body.splice(this.#parts.length - 3);
     const head = body.shift();
 
     this.#parts = [head, ...body, ...tail].filter(isNotUndefined);
@@ -58,13 +60,14 @@ export class Snake {
     };
   }
 
-  // todo
-  //  keep to fixed length. grow if it eats an 'apple'
+  getFullSnake(): GridNode[] {
+    return this.#parts;
+  }
 
   moveSnake(nodeProps: GridNodeProps) {
     if (this.isDying) {
-      this.#maxLength = this.#maxLength - 1;
-      this.isDead = this.#maxLength <= 0;
+      this.#targetLength = this.#targetLength - 1;
+      this.isDead = this.#targetLength <= 0;
 
       return;
     }
@@ -74,7 +77,7 @@ export class Snake {
     this.#iterator++;
     this.#direction = nextDirection;
     this.#parts.unshift(
-      new GridNode(nextPoint, nodeProps, `${this.#props.id}-${this.#iterator}`),
+      new GridNode(nextPoint, nodeProps, `${this.snakeId}-${this.#iterator}`),
     );
   }
 
@@ -90,7 +93,7 @@ export class Snake {
     );
 
     if (snakeWillDie) {
-      console.log(`Snake ${this.#props.id} collided! at ${head?.pointStr}`);
+      console.log(`Snake ${this.snakeId} collided! at ${head?.pointStr}`);
       this.isDying = true;
 
       return;
@@ -101,9 +104,28 @@ export class Snake {
     );
 
     if (snakeAteApple) {
-      this.#maxLength += this.#props.startingLength;
+      this.#targetLength += this.#props.startingLength;
       applesManager.destroyApple(snakeAteApple.id);
     }
+  }
+
+  getEdgeCollision(edgeNodes: GridNode[]) {
+    if (this.isDying) {
+      return;
+    }
+    const head = this.#parts[0];
+    const edgeHit = edgeNodes.find(node => node.pointStr === head!.pointStr);
+
+    if (edgeHit) {
+      console.log(`Snake ${this.snakeId} hit Edge. Going ${GridDirection[this.#direction!]}`, edgeHit)
+    }
+
+    return edgeHit;
+    // if (edgeNodes.this.#parts[0].pointStr)
+  }
+
+  getFullLength() {
+    return this.#targetLength;
   }
 
   #getNextPoint() {
@@ -121,7 +143,7 @@ export class Snake {
 
     if (currentDirection !== nextDirection) {
       console.log(
-        `Snake ${this.#props.id} now going ${GridDirection[nextDirection]}`,
+        `Snake ${this.snakeId} now going ${GridDirection[nextDirection]}`,
       );
     }
 

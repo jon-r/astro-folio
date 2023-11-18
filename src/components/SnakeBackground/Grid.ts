@@ -61,6 +61,11 @@ export class Grid {
     this.#ticker.play();
   }
 
+  togglePause() {
+    console.log('paused');
+    this.#ticker.toggle()
+  }
+
   #handleTick = () => {
     this.#manageApples();
     this.#manageSnakes();
@@ -148,4 +153,4 @@ export class Grid {
   }
 }
 
-(window as any).TempGrid = Grid;
+// (window as any).TempGrid = Grid;

@@ -22,8 +22,12 @@ export class Ticker extends EventTarget {
     this.#loop(0);
   }
 
-  pause() {
-    this.#isPaused = true;
+  toggle() {
+    if (this.#isPaused) {
+      this.play()
+    } else {
+      this.#isPaused = true;
+    }
   }
 
   #loop = (timestamp: number) => {
