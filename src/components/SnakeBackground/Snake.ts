@@ -1,6 +1,6 @@
 import { GridDirection } from "./constants.js";
 import { gridDirectionVector, POSSIBLE_DIRECTIONS } from "./constants.js";
-import { GridNode, GridNodeProps } from "./GridNode.js";
+import { GridNode, type GridNodeProps } from "./GridNode.js";
 
 import { isNotUndefined } from "../../util/generics.js";
 import { addVectors, biasedRNG } from "../../util/number.js";

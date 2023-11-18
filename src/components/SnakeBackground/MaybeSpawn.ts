@@ -10,7 +10,7 @@ export abstract class MaybeSpawn {
   protected constructor(props: MaybeSpawnProps) {
     this.#props = props;
   }
-  protected maybeSpawn(currentCount: number): boolean {
-    return currentCount < this.#props.maxItems && randomFlip(this.#props.spawnChance);
+  protected maybeSpawn<T>(currentItems: T[]): boolean {
+    return currentItems.length < this.#props.maxItems && randomFlip(this.#props.spawnChance);
   }
 }

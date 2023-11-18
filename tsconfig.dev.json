@@ -5,6 +5,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "noUnusedLocals": false,
-    "noEmit": false
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
   }
 }

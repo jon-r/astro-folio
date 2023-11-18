@@ -1,7 +1,7 @@
 import { randomFrom } from "../../util/number.js";
 import { Apple } from "./Apple.js";
 import type { GridNode } from "./GridNode.js";
-import { MaybeSpawn, MaybeSpawnProps } from "./MaybeSpawn.js";
+import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 
 interface ApplesManagerProps extends MaybeSpawnProps {
   // spawnChance: number;
@@ -18,7 +18,7 @@ export class ApplesManager extends MaybeSpawn {
     // this.#props = props;
   }
   maybeAddNewApple(allNodes: GridNode[], usedNodes: GridNode[]) {
-    if (!this.maybeSpawn(this.apples.length)) {
+    if (!this.maybeSpawn(this.apples)) {
       return;
     }
 

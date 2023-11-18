@@ -28,7 +28,7 @@ export class SnakesManager extends MaybeSpawn {
   }
 
   maybeAddNewSnake(starterNodes: GridNode[]) {
-    if (!this.maybeSpawn(this.#snakes.length)) {
+    if (!this.maybeSpawn(this.#snakes)) {
       return;
     }
 
