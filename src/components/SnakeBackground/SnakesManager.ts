@@ -1,6 +1,6 @@
 import { randomFrom } from "../../util/number.js";
 import type { ApplesManager } from "./ApplesManager.js";
-import {OPPOSITE_EDGE, SnakeColours} from "./constants.js";
+import { OPPOSITE_EDGE, SnakeColours } from "./constants.js";
 import type { GridNode, GridNodeProps } from "./GridNode.js";
 import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 import { Snake } from "./Snake.js";
@@ -37,24 +37,26 @@ export class SnakesManager extends MaybeSpawn {
 
   #getOppositeStartingPoint(oldNode: GridNode, starterNodes: GridNode[]) {
     if (oldNode.startDirection === null) {
-      throw new Error('collided with a non starter?')
+      throw new Error("collided with a non starter?");
     }
 
-    const {direction, matchingCoordinate} = OPPOSITE_EDGE[oldNode.startDirection];
+    const { direction, matchingCoordinate } = OPPOSITE_EDGE[oldNode.startDirection];
 
-    return starterNodes.find(node => node.point[matchingCoordinate] === oldNode.point[matchingCoordinate] && node.startDirection === direction);
+    return starterNodes.find(node =>
+      node.point[matchingCoordinate] === oldNode.point[matchingCoordinate] && node.startDirection === direction
+    );
   }
 
   #spawnSnake(startingNode: GridNode, targetLength: number = this.#props.snakeStartingLength) {
-    this.#nextSnakeId = (this.#nextSnakeId + 1) % (this.#props.maxItems*2);
+    this.#nextSnakeId = (this.#nextSnakeId + 1) % (this.#props.maxItems * 2);
 
     this.#snakes.push(
-        new Snake({
-          startingNode,
-          targetLength,
-          startingLength: this.#props.snakeStartingLength,
-        }, String(this.#nextSnakeId))
-    )
+      new Snake({
+        startingNode,
+        targetLength,
+        startingLength: this.#props.snakeStartingLength,
+      }, String(this.#nextSnakeId)),
+    );
   }
 
   setNodeProps(nodeProps: GridNodeProps) {
@@ -105,11 +107,11 @@ export class SnakesManager extends MaybeSpawn {
         const newPosition = this.#getOppositeStartingPoint(edgeCollision, starterNodes);
 
         if (newPosition) {
-          console.log('respawning snake')
+          console.log("respawning snake");
           // stops snakes respawning too small if the collide as they are going off the edge of the page
           // const startingLength = Math.max(snake.getMaxLength(), this.#props.snakeStartingLength);
 
-          this.#spawnSnake(newPosition, snake.getFullLength())
+          this.#spawnSnake(newPosition, snake.getFullLength());
         }
       }
     });

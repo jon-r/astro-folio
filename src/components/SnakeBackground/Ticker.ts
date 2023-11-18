@@ -24,7 +24,7 @@ export class Ticker extends EventTarget {
 
   toggle() {
     if (this.#isPaused) {
-      this.play()
+      this.play();
     } else {
       this.#isPaused = true;
     }

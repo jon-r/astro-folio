@@ -6,6 +6,6 @@
     "moduleResolution": "NodeNext",
     "noUnusedLocals": false,
     "noEmit": false,
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": false
   }
 }

@@ -46,12 +46,12 @@ interface OppositeEdgeInfo {
   matchingCoordinate: 0 | 1;
 }
 
-export const OPPOSITE_EDGE: Record<GridDirection,OppositeEdgeInfo> = {
-  [GridDirection.Up]: {direction: GridDirection.Down, matchingCoordinate: 0},
-  [GridDirection.Right]: {direction: GridDirection.Left, matchingCoordinate: 1},
-  [GridDirection.Down]: {direction: GridDirection.Up, matchingCoordinate: 0},
-  [GridDirection.Left]: {direction: GridDirection.Right, matchingCoordinate: 1},
-}
+export const OPPOSITE_EDGE: Record<GridDirection, OppositeEdgeInfo> = {
+  [GridDirection.Up]: { direction: GridDirection.Down, matchingCoordinate: 0 },
+  [GridDirection.Right]: { direction: GridDirection.Left, matchingCoordinate: 1 },
+  [GridDirection.Down]: { direction: GridDirection.Up, matchingCoordinate: 0 },
+  [GridDirection.Left]: { direction: GridDirection.Right, matchingCoordinate: 1 },
+};
 
 export const gridDirectionVector: Record<GridDirection, GridPoint> = {
   [GridDirection.Up]: [0, -1],

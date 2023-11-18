@@ -117,7 +117,7 @@ export class Snake {
     const edgeHit = edgeNodes.find(node => node.pointStr === head!.pointStr);
 
     if (edgeHit) {
-      console.log(`Snake ${this.snakeId} hit Edge. Going ${GridDirection[this.#direction!]}`, edgeHit)
+      console.log(`Snake ${this.snakeId} hit Edge. Going ${GridDirection[this.#direction!]}`, edgeHit);
     }
 
     return edgeHit;

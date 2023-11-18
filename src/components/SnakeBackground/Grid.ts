@@ -62,8 +62,8 @@ export class Grid {
   }
 
   togglePause() {
-    console.log('paused');
-    this.#ticker.toggle()
+    console.log("paused");
+    this.#ticker.toggle();
   }
 
   #handleTick = () => {
