@@ -1,9 +1,10 @@
-import { GridNode, GridNodeProps } from "./GridNode.js";
 import { GridDirection } from "./constants.js";
 import { gridDirectionVector, POSSIBLE_DIRECTIONS } from "./constants.js";
+import { GridNode, GridNodeProps } from "./GridNode.js";
 
-import {addVectors, biasedRNG} from "../../util/number.js";
-import {isNotUndefined} from "../../util/generics.js";
+import { isNotUndefined } from "../../util/generics.js";
+import { addVectors, biasedRNG } from "../../util/number.js";
+import type { ApplesManager } from "./ApplesManager.js";
 
 interface SnakeProps {
   id: string;
@@ -24,9 +25,9 @@ export class Snake {
   #maxLength: number;
   #direction: GridDirection | null;
   #parts: GridNode[];
-  #isDying = false;
   #iterator = 0;
-  
+
+  isDying = false;
   isDead = false;
 
   constructor(props: SnakeProps) {
@@ -36,7 +37,9 @@ export class Snake {
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
 
-    console.log(`Snake ${props.id} Started at ${startingNode.pointStr}. Going ${GridDirection[startingNode.startDirection!]}`)
+    console.log(
+      `Snake ${props.id} Started at ${startingNode.pointStr}. Going ${GridDirection[startingNode.startDirection!]}`,
+    );
   }
 
   getSnakeAsParts(): SnakeParts {
@@ -44,23 +47,22 @@ export class Snake {
     const end = body.splice(this.#maxLength);
     const tail = body.splice(this.#maxLength - 2);
     const head = body.shift();
-    
+
     this.#parts = [head, ...body, ...tail].filter(isNotUndefined);
 
     return {
       head,
       body,
       tail,
-      end
+      end,
     };
   }
-
 
   // todo
   //  keep to fixed length. grow if it eats an 'apple'
 
   moveSnake(nodeProps: GridNodeProps) {
-    if (this.#isDying) {
+    if (this.isDying) {
       this.#maxLength = this.#maxLength - 1;
       this.isDead = this.#maxLength <= 0;
 
@@ -71,22 +73,36 @@ export class Snake {
 
     this.#iterator++;
     this.#direction = nextDirection;
-    this.#parts.unshift(new GridNode(nextPoint, nodeProps, `${this.#props.id}-${this.#iterator}`));
+    this.#parts.unshift(
+      new GridNode(nextPoint, nodeProps, `${this.#props.id}-${this.#iterator}`),
+    );
   }
-  
-  // FIXME not all snakes seem to be dying?
-  handleCollisions(fatalNodes: GridNode[]) {
-    if (this.#isDying) {
+
+  handleCollisions(fatalNodes: GridNode[], applesManager: ApplesManager) {
+    if (this.isDying) {
       return;
     }
 
     const head = this.#parts[0];
 
-    const snakeWillDie = fatalNodes.some(node => node.nodeId !== head?.nodeId && node.pointStr === head?.pointStr);
-    
+    const snakeWillDie = fatalNodes.some(
+      (node) => node.nodeOwner !== head?.nodeOwner && node.pointStr === head?.pointStr,
+    );
+
     if (snakeWillDie) {
-      console.log(`snake ${this.#props.id} collided! at ${head?.pointStr}`)
-      this.#isDying = true;
+      console.log(`Snake ${this.#props.id} collided! at ${head?.pointStr}`);
+      this.isDying = true;
+
+      return;
+    }
+
+    const snakeAteApple = applesManager.apples.find(
+      (apple) => apple.id === head?.pointStr,
+    );
+
+    if (snakeAteApple) {
+      this.#maxLength += this.#props.startingLength;
+      applesManager.destroyApple(snakeAteApple.id);
     }
   }
 
@@ -95,23 +111,23 @@ export class Snake {
     const currentDirection = this.#direction;
 
     if (!head || currentDirection === null) {
-      throw new Error(`Bad Snake, ${JSON.stringify({ currentDirection, head })}`);
+      throw new Error(
+        `Bad Snake, ${JSON.stringify({ currentDirection, head })}`,
+      );
     }
 
     const possibleDirections = POSSIBLE_DIRECTIONS[currentDirection];
     const nextDirection = biasedRNG(possibleDirections, 1, 50);
 
     if (currentDirection !== nextDirection) {
-      console.log(`Snake ${this.#props.id} now going ${GridDirection[nextDirection]}`)
+      console.log(
+        `Snake ${this.#props.id} now going ${GridDirection[nextDirection]}`,
+      );
     }
 
     return {
       nextDirection,
-      nextPoint: addVectors(
-        head.point,
-        gridDirectionVector[nextDirection]
-      ),
+      nextPoint: addVectors(head.point, gridDirectionVector[nextDirection]),
     };
   }
-
 }

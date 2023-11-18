@@ -1,9 +1,10 @@
 import { debounce } from "../../util/generics.js";
-import { GridNode, GridNodeProps } from "./GridNode.js";
+import { ApplesManager } from "./ApplesManager.js";
+import { APPLE_COLOUR, SnakeColours } from "./constants.js";
+import { GridNode, type GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
-import { SnakeColours } from "./constants.js";
+import { SnakesManager } from "./SnakesManager.js";
 import { Ticker } from "./Ticker.js";
-import { Snakes } from "./Snakes.js";
 
 type GridProps = GridOptions;
 
@@ -11,11 +12,12 @@ export class Grid {
   readonly #element: HTMLCanvasElement;
   readonly #ctx: CanvasRenderingContext2D;
   readonly #props: GridProps;
+
   readonly #squareBase: Path2D;
   readonly #ticker: Ticker;
-  readonly #snakes: Snakes;
+  readonly #snakes: SnakesManager;
+  readonly #apples: ApplesManager;
 
-  #nodeProps: GridNodeProps = { rows: 0, cols: 0 };
   #gridNodes: GridNode[] = [];
   #starterNodes: GridNode[] = [];
 
@@ -25,18 +27,23 @@ export class Grid {
     this.#element = element;
     this.#ctx = element.getContext("2d", { alpha: false })!;
     this.#props = props;
-    this.#ticker = new Ticker({ interval: props.snakeSpeedMs });
-    this.#snakes = new Snakes({
-      snakeStartingLength: props.snakeStartingLength,
-      maxSnakes: props.maxSnakes,
-    });
 
+    this.#ticker = new Ticker({ interval: props.snakeSpeedMs });
+    this.#snakes = new SnakesManager({
+      spawnChance: props.snakeSpawnChance,
+      snakeStartingLength: props.snakeStartingLength,
+      maxItems: props.maxSnakes,
+    });
+    this.#apples = new ApplesManager({
+      spawnChance: props.appleSpawnChance,
+      maxItems: props.maxApples,
+    });
     const path = new Path2D();
     path.rect(
       gridSpacing,
       gridSpacing,
       rectWidth - gridSpacing,
-      rectHeight - gridSpacing
+      rectHeight - gridSpacing,
     );
 
     this.#squareBase = path;
@@ -55,18 +62,31 @@ export class Grid {
   }
 
   #handleTick = () => {
-    // todo move both to a single function? or split in parts in the child class
-    this.#snakes.addNewSnake(this.#starterNodes);
+    this.#manageApples();
+    this.#manageSnakes();
+  };
 
-    const rendered = this.#snakes.controlSnakes(
-      this.#nodeProps,
-      this.#starterNodes
-    );
+  #manageSnakes() {
+    this.#snakes.maybeAddNewSnake(this.#starterNodes);
+
+    const rendered = this.#snakes.updateSnakePosition();
 
     Object.entries(rendered).forEach(([color, nodes]) => {
       this.#renderNodes(nodes, color);
     });
-  };
+
+    this.#snakes.handleCollisions(this.#starterNodes, this.#apples);
+  }
+
+  #manageApples() {
+    const maybeNewApple = this.#apples.maybeAddNewApple(this.#gridNodes, this.#snakes.activeNodes);
+
+    if (!maybeNewApple) {
+      return;
+    }
+
+    this.#renderNodes([maybeNewApple], APPLE_COLOUR);
+  }
 
   #handleResize = () => {
     const { innerHeight, innerWidth } = window;
@@ -92,19 +112,20 @@ export class Grid {
     const colArr = new Array(cols).fill(0);
     const rowArr = new Array(rows).fill(0);
 
-    const nodeOptions: GridNodeProps = { rows, cols };
+    const nodeProps: GridNodeProps = { rows, cols };
 
     colArr.forEach((_, x) => {
       rowArr.forEach((__, y) => {
-        gridNodes.push(new GridNode([x, y], nodeOptions));
+        gridNodes.push(new GridNode([x, y], nodeProps));
       });
     });
 
     this.#gridNodes = gridNodes;
     this.#starterNodes = gridNodes.filter(
-      (node) => node.startDirection !== null
+      (node) => node.startDirection !== null,
     );
-    this.#nodeProps = nodeOptions;
+
+    this.#snakes.setNodeProps(nodeProps);
   }
 
   #renderNodes(nodes: GridNode[], colour: string) {

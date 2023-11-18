@@ -7,12 +7,13 @@ export enum GridDirection {
   Left,
 }
 
-export enum SnakeColours {
+export const enum SnakeColours {
   Background = "#111",
   Tail = "#066",
   Body = "#0cc",
   Head = "#0ff",
 }
+export const APPLE_COLOUR = "#de32e5";
 
 export const POSSIBLE_DIRECTIONS: Record<
   GridDirection,

@@ -14,7 +14,7 @@ interface DebounceOptions {
 export function debounce(
   func: Callback,
   delay: number,
-  { leading }: DebounceOptions = {}
+  { leading }: DebounceOptions = {},
 ): DebouncedCallback {
   let timerId: NodeJS.Timeout;
 

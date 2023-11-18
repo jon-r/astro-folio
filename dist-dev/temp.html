@@ -18,13 +18,18 @@
   <script>
     window.addEventListener("load", async () => {
       const htmlElement = document.getElementById("snakes");
+
+      /** @type {import('src/SnakeBackground/GridOptions').GridOptions} */
       const gridOptions = {
-        rectHeight: 10,
-        rectWidth: 10,
+        rectHeight: 12,
+        rectWidth: 12,
         gridSpacing: 1,
-        snakeSpeedMs: 100,
-        maxSnakes: 10,
-        snakeStartingLength: 10,
+        snakeSpeedMs: 1000 / 10,
+        maxSnakes: 2,
+        snakeStartingLength: 15,
+        snakeSpawnChance: 40,
+        appleSpawnChance: 5,
+        maxApples: 20,
       };
 
       if (htmlElement instanceof HTMLCanvasElement) {

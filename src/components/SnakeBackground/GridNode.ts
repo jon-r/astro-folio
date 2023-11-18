@@ -8,13 +8,17 @@ export interface GridNodeProps {
 }
 
 export class GridNode {
-  readonly nodeId: string | null;
+  readonly nodeOwner: string | null;
   readonly pointStr: string;
   readonly startDirection: GridDirection | null;
 
-  constructor(readonly point: GridPoint, props: GridNodeProps, nodeId?: string) {
+  constructor(
+    readonly point: GridPoint,
+    props: GridNodeProps,
+    nodeId?: string,
+  ) {
     this.startDirection = this.#getStartDirection(point, props);
-    this.nodeId = nodeId ?? null;
+    this.nodeOwner = nodeId ?? null;
     this.pointStr = point.toString();
   }
 
