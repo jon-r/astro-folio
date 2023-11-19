@@ -1,8 +1,9 @@
 import { debounce } from "../../util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
-import { APPLE_COLOUR, SnakeColours } from "./constants.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
+import { APPLE_COLOUR, SnakeColours } from "./helpers/constants.js";
+import { findNodeCollision, makeGridPoints } from "./helpers/grid.js";
 import { SnakesManager } from "./SnakesManager.js";
 import { Ticker } from "./Ticker.js";
 
@@ -71,9 +72,9 @@ export class Grid {
   #manageSnakes() {
     this.#snakes.maybeAddNewSnake(this.#starterNodes);
 
-    const rendered = this.#snakes.updateSnakePosition();
+    const snakesToRender = this.#snakes.updateSnakePosition();
 
-    Object.entries(rendered).forEach(([color, nodes]) => {
+    Object.entries(snakesToRender).forEach(([color, nodes]) => {
       this.#renderNodes(nodes, color);
     });
 
@@ -81,13 +82,14 @@ export class Grid {
   }
 
   #manageApples() {
-    const maybeNewApple = this.#apples.maybeAddNewApple(this.#gridNodes, this.#snakes.activeNodes);
+    const availableNodes = this.#gridNodes.filter(gridNode => !findNodeCollision(gridNode, this.#snakes.activeNodes));
+    const appleToRender = this.#apples.maybeAddNewApple(availableNodes);
 
-    if (!maybeNewApple) {
+    if (!appleToRender) {
       return;
     }
 
-    this.#renderNodes([maybeNewApple], APPLE_COLOUR);
+    this.#renderNodes([appleToRender], APPLE_COLOUR);
   }
 
   #handleResize = () => {
@@ -106,21 +108,12 @@ export class Grid {
   #setupGridNodes(width: number, height: number) {
     const { rectHeight, rectWidth } = this.#props;
 
-    const gridNodes: GridNode[] = [];
-
     const rows = Math.ceil(height / rectHeight);
     const cols = Math.ceil(width / rectWidth);
 
-    const colArr = new Array(cols).fill(0);
-    const rowArr = new Array(rows).fill(0);
-
     const nodeProps: GridNodeProps = { rows, cols };
 
-    colArr.forEach((_, x) => {
-      rowArr.forEach((__, y) => {
-        gridNodes.push(new GridNode([x, y], nodeProps));
-      });
-    });
+    const gridNodes: GridNode[] = makeGridPoints(rows, cols).map((gridPoint) => new GridNode(gridPoint, nodeProps));
 
     this.#gridNodes = gridNodes;
     this.#starterNodes = gridNodes.filter(

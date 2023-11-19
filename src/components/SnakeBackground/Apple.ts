@@ -1,18 +1,8 @@
 import type { GridNode } from "./GridNode.js";
+import { debugToConsole } from "./helpers/logger.js";
 
-interface AppleProps {
-  node: GridNode;
-}
 export class Apple {
-  readonly #props: AppleProps;
-  readonly id: string;
-
-  constructor(props: AppleProps) {
-    this.#props = props;
-    this.id = props.node.pointStr;
-  }
-
-  getApplePosition(): GridNode {
-    return this.#props.node;
+  constructor(readonly node: GridNode, readonly id = node.id) {
+    debugToConsole.log(`Apple spawned at ${node.id}`);
   }
 }

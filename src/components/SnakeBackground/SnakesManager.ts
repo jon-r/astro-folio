@@ -1,20 +1,20 @@
-import {randomFrom} from "../../util/number.js";
-import type {ApplesManager} from "./ApplesManager.js";
-import {OPPOSITE_EDGE, SnakeColours, SnakeStatus} from "./constants.js";
-import type {GridNode, GridNodeProps} from "./GridNode.js";
-import {MaybeSpawn, type MaybeSpawnProps} from "./MaybeSpawn.js";
-import {Snake} from "./Snake.js";
+import type { ApplesManager } from "./ApplesManager.js";
+import type { GridNode, GridNodeProps } from "./GridNode.js";
+import { OPPOSITE_EDGE, SnakeColours, SnakeStatus } from "./helpers/constants.js";
+import { loopIds } from "./helpers/rng.js";
+import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
+import { Snake } from "./Snake.js";
 
 interface SnakesProps extends MaybeSpawnProps {
   snakeStartingLength: number;
 }
 
-export class SnakesManager extends MaybeSpawn {
+export class SnakesManager extends MaybeSpawn<Snake> {
   readonly #props: SnakesProps;
 
   #snakes: Snake[] = [];
   #nodeProps: GridNodeProps = { rows: 0, cols: 0 };
-  #nextSnakeId = 0;
+  #iterator = 0;
 
   activeNodes: GridNode[] = [];
 
@@ -24,13 +24,24 @@ export class SnakesManager extends MaybeSpawn {
     this.#props = props;
   }
 
-  maybeAddNewSnake(starterNodes: GridNode[]) {
-    if (!this.maybeSpawn(this.#snakes)) {
-      return;
-    }
-
-    this.#spawnSnake(randomFrom(starterNodes), this.#props.snakeStartingLength);
+  maybeAddNewSnake(availableNodes: GridNode[]) {
+    return this.maybeSpawn(this.#snakes, this.#handleSpawnSnake, availableNodes);
   }
+
+  #handleSpawnSnake = (startingNode: GridNode, targetLength: number = this.#props.snakeStartingLength) => {
+    this.#iterator = loopIds(this.#iterator, this.#props.maxItems);
+
+    const newSnake = new Snake(startingNode, {
+      targetLength,
+      startingLength: this.#props.snakeStartingLength,
+    }, String(this.#iterator));
+
+    this.#snakes.push(
+      newSnake,
+    );
+
+    return newSnake;
+  };
 
   #getOppositeStartingPoint(oldNode: GridNode, starterNodes: GridNode[]) {
     if (oldNode.startDirection === null) {
@@ -41,18 +52,6 @@ export class SnakesManager extends MaybeSpawn {
 
     return starterNodes.find(node =>
       node.point[matchingCoordinate] === oldNode.point[matchingCoordinate] && node.startDirection === direction
-    );
-  }
-
-  #spawnSnake(startingNode: GridNode, targetLength: number = this.#props.snakeStartingLength) {
-    this.#nextSnakeId = (this.#nextSnakeId + 1) % (this.#props.maxItems * 2);
-
-    this.#snakes.push(
-      new Snake({
-        startingNode,
-        targetLength,
-        startingLength: this.#props.snakeStartingLength,
-      }, String(this.#nextSnakeId)),
     );
   }
 
@@ -89,27 +88,26 @@ export class SnakesManager extends MaybeSpawn {
     return rendered;
   }
 
-  handleCollisions(starterNodes: GridNode[], apples: ApplesManager) {
+  handleCollisions = (starterNodes: GridNode[], apples: ApplesManager) => {
     this.#snakes
-        .filter((snake) => snake.status === SnakeStatus.Ok)
-        .forEach((snake) => {
+      .filter((snake) => snake.status === SnakeStatus.Ok)
+      .forEach((snake) => {
+        const edgeCollision = snake.getEdgeCollision(starterNodes);
 
-      const edgeCollision = snake.getEdgeCollision(starterNodes);
+        snake.handleCollisions(
+          [...this.activeNodes, ...starterNodes],
+          apples,
+        );
 
-      snake.handleCollisions(
-        [...this.activeNodes, ...starterNodes],
-        apples,
-      );
+        if (edgeCollision) {
+          const newPosition = this.#getOppositeStartingPoint(edgeCollision, starterNodes);
 
-      if (edgeCollision) {
-        const newPosition = this.#getOppositeStartingPoint(edgeCollision, starterNodes);
-
-        if (newPosition) {
-          this.#spawnSnake(newPosition, snake.getFullLength());
+          if (newPosition) {
+            this.#handleSpawnSnake(newPosition, snake.targetLength);
+          }
         }
-      }
-    });
+      });
 
     this.#snakes = [...this.#snakes].filter((snake) => snake.status !== SnakeStatus.Dead);
-  }
+  };
 }

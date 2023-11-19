@@ -1,4 +1,4 @@
-import type { GridPoint } from "./GridNode.js";
+import type { GridPoint } from "../GridNode.js";
 
 export enum GridDirection {
   Up,
@@ -16,36 +16,10 @@ export const enum SnakeColours {
 export const enum SnakeStatus {
   Ok,
   Dying,
-  Dead
+  Dead,
 }
 
 export const APPLE_COLOUR = "#530356";
-
-export const POSSIBLE_DIRECTIONS: Record<
-  GridDirection,
-  [GridDirection, GridDirection, GridDirection]
-> = {
-  [GridDirection.Up]: [
-    GridDirection.Left,
-    GridDirection.Up,
-    GridDirection.Right,
-  ],
-  [GridDirection.Right]: [
-    GridDirection.Up,
-    GridDirection.Right,
-    GridDirection.Down,
-  ],
-  [GridDirection.Down]: [
-    GridDirection.Right,
-    GridDirection.Down,
-    GridDirection.Left,
-  ],
-  [GridDirection.Left]: [
-    GridDirection.Down,
-    GridDirection.Left,
-    GridDirection.Up,
-  ],
-};
 
 interface OppositeEdgeInfo {
   direction: GridDirection;
@@ -59,7 +33,7 @@ export const OPPOSITE_EDGE: Record<GridDirection, OppositeEdgeInfo> = {
   [GridDirection.Left]: { direction: GridDirection.Right, matchingCoordinate: 1 },
 };
 
-export const gridDirectionVector: Record<GridDirection, GridPoint> = {
+export const GRID_DIRECTION_VECTOR: Record<GridDirection, GridPoint> = {
   [GridDirection.Up]: [0, -1],
   [GridDirection.Right]: [1, 0],
   [GridDirection.Down]: [0, 1],

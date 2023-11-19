@@ -1,34 +1,27 @@
-import { debugToConsole } from "../../util/logger.js";
-import { randomFrom } from "../../util/number.js";
 import { Apple } from "./Apple.js";
 import type { GridNode } from "./GridNode.js";
+import { debugToConsole } from "./helpers/logger.js";
 import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 
 interface ApplesManagerProps extends MaybeSpawnProps {}
 
-export class ApplesManager extends MaybeSpawn {
+export class ApplesManager extends MaybeSpawn<Apple> {
   apples: Apple[] = [];
 
   constructor(props: ApplesManagerProps) {
     super(props);
   }
-  maybeAddNewApple(allNodes: GridNode[], usedNodes: GridNode[]) {
-    if (!this.maybeSpawn(this.apples)) {
-      return;
-    }
 
-    const newApplePosition = randomFrom(allNodes);
+  maybeAddNewApple(availableNodes: GridNode[]) {
+    return this.maybeSpawn(this.apples, this.#handleSpawnApple, availableNodes)?.node;
+  }
 
-    if (usedNodes.some(node => node.pointStr === newApplePosition.pointStr)) {
-      return null;
-    }
-
-    const newApple = new Apple({ node: newApplePosition });
-
+  #handleSpawnApple = (node: GridNode) => {
+    const newApple = new Apple(node);
     this.apples.push(newApple);
 
-    return newApple.getApplePosition();
-  }
+    return newApple;
+  };
 
   destroyApple(point: string) {
     debugToConsole.log(`Apple ${point} eaten!`);

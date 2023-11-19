@@ -1,4 +1,4 @@
-import { GridDirection } from "./constants.js";
+import { GridDirection } from "./helpers/constants.js";
 
 export type GridPoint = [x: number, y: number];
 
@@ -8,18 +8,16 @@ export interface GridNodeProps {
 }
 
 export class GridNode {
-  readonly nodeOwner: string | null;
-  readonly pointStr: string;
+  readonly id: string;
   readonly startDirection: GridDirection | null;
 
   constructor(
     readonly point: GridPoint,
     props: GridNodeProps,
-    nodeOwner?: string,
+    readonly owner: string | null = null,
   ) {
     this.startDirection = this.#getStartDirection(point, props);
-    this.nodeOwner = nodeOwner ?? null;
-    this.pointStr = point.toString();
+    this.id = point.toString();
   }
 
   #getStartDirection([x, y]: GridPoint, { rows, cols }: GridNodeProps) {
