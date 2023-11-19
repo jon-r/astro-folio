@@ -1,9 +1,9 @@
-import { randomFrom } from "../../util/number.js";
-import type { ApplesManager } from "./ApplesManager.js";
-import { OPPOSITE_EDGE, SnakeColours } from "./constants.js";
-import type { GridNode, GridNodeProps } from "./GridNode.js";
-import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
-import { Snake } from "./Snake.js";
+import {randomFrom} from "../../util/number.js";
+import type {ApplesManager} from "./ApplesManager.js";
+import {OPPOSITE_EDGE, SnakeColours, SnakeStatus} from "./constants.js";
+import type {GridNode, GridNodeProps} from "./GridNode.js";
+import {MaybeSpawn, type MaybeSpawnProps} from "./MaybeSpawn.js";
+import {Snake} from "./Snake.js";
 
 interface SnakesProps extends MaybeSpawnProps {
   snakeStartingLength: number;
@@ -65,7 +65,6 @@ export class SnakesManager extends MaybeSpawn {
       [SnakeColours.Background]: [],
       [SnakeColours.Head]: [],
       [SnakeColours.Body]: [],
-      [SnakeColours.Tail]: [],
     };
 
     const activeNodes: GridNode[] = [];
@@ -76,14 +75,13 @@ export class SnakesManager extends MaybeSpawn {
       const snakeParts = snake.getSnakeAsParts();
 
       if (snakeParts.head) {
-        const colour = snake.isDying ? SnakeColours.Body : SnakeColours.Head;
+        const colour = snake.status === SnakeStatus.Dying ? SnakeColours.Body : SnakeColours.Head;
         rendered[colour].push(snakeParts.head);
       }
 
       rendered[SnakeColours.Background].push(...snakeParts.end);
       rendered[SnakeColours.Body].push(...snakeParts.body);
-      rendered[SnakeColours.Tail].push(...snakeParts.tail);
-      activeNodes.push(...snakeParts.body, ...snakeParts.tail);
+      activeNodes.push(...snakeParts.body);
     });
 
     this.activeNodes = activeNodes;
@@ -92,7 +90,10 @@ export class SnakesManager extends MaybeSpawn {
   }
 
   handleCollisions(starterNodes: GridNode[], apples: ApplesManager) {
-    this.#snakes.forEach((snake) => {
+    this.#snakes
+        .filter((snake) => snake.status === SnakeStatus.Ok)
+        .forEach((snake) => {
+
       const edgeCollision = snake.getEdgeCollision(starterNodes);
 
       snake.handleCollisions(
@@ -109,6 +110,6 @@ export class SnakesManager extends MaybeSpawn {
       }
     });
 
-    this.#snakes = [...this.#snakes].filter((snake) => !snake.isDead);
+    this.#snakes = [...this.#snakes].filter((snake) => snake.status !== SnakeStatus.Dead);
   }
 }

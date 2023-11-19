@@ -1,4 +1,4 @@
-const shouldLog = false;
+const shouldLog = true;
 
 export const debugToConsole = {
   log: (...message: unknown[]) => shouldLog && console.log(...message),

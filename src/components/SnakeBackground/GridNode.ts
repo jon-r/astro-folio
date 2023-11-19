@@ -15,10 +15,10 @@ export class GridNode {
   constructor(
     readonly point: GridPoint,
     props: GridNodeProps,
-    nodeId?: string,
+    nodeOwner?: string,
   ) {
     this.startDirection = this.#getStartDirection(point, props);
-    this.nodeOwner = nodeId ?? null;
+    this.nodeOwner = nodeOwner ?? null;
     this.pointStr = point.toString();
   }
 
