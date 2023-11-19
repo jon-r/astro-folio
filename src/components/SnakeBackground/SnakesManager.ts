@@ -1,9 +1,10 @@
 import type { ApplesManager } from "./ApplesManager.js";
 import type { GridNode, GridNodeProps } from "./GridNode.js";
-import { OPPOSITE_EDGE, SnakeColours, SnakeStatus } from "./helpers/constants.js";
+import { OPPOSITE_EDGES, SnakeColours, SnakeStatus } from "./helpers/constants.js";
 import { loopIds } from "./helpers/rng.js";
 import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 import { Snake } from "./Snake.js";
+import {getOppositeStartingPoint} from "./helpers/grid.ts";
 
 interface SnakesProps extends MaybeSpawnProps {
   snakeStartingLength: number;
@@ -44,15 +45,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
   };
 
   #getOppositeStartingPoint(oldNode: GridNode, starterNodes: GridNode[]) {
-    if (oldNode.startDirection === null) {
-      throw new Error("collided with a non starter?");
-    }
-
-    const { direction, matchingCoordinate } = OPPOSITE_EDGE[oldNode.startDirection];
-
-    return starterNodes.find(node =>
-      node.point[matchingCoordinate] === oldNode.point[matchingCoordinate] && node.startDirection === direction
-    );
+    return getOppositeStartingPoint(oldNode, starterNodes);
   }
 
   setNodeProps(nodeProps: GridNodeProps) {

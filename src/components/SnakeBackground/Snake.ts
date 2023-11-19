@@ -1,8 +1,8 @@
 import { isNotUndefined } from "../../util/generics.js";
 import type { ApplesManager } from "./ApplesManager.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
-import { GRID_DIRECTION_VECTOR, GridDirection, SnakeStatus } from "./helpers/constants.js";
-import { addVectors, findNodeCollision, getNextValidDirection } from "./helpers/grid.js";
+import { GridDirection, SnakeStatus } from "./helpers/constants.js";
+import { getOffsetGridPoint, findNodeCollision, getNextValidDirection } from "./helpers/grid.js";
 import { debugToConsole } from "./helpers/logger.js";
 import { loopIds } from "./helpers/rng.js";
 
@@ -127,7 +127,7 @@ export class Snake {
 
     return {
       nextDirection,
-      nextPoint: addVectors(head.point, GRID_DIRECTION_VECTOR[nextDirection]),
+      nextPoint: getOffsetGridPoint(head.point, nextDirection),
     };
   }
 }
