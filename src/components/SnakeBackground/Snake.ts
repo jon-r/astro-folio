@@ -1,17 +1,19 @@
 import { isNotUndefined } from "../../util/generics.js";
 import type { ApplesManager } from "./ApplesManager.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
-import { GridDirection, SnakeStatus } from "./helpers/constants.js";
-import { getOffsetGridPoint, findNodeCollision, getNextValidDirection } from "./helpers/grid.js";
+import { GridDirection, type SnakeColours, SnakeStatus } from "./helpers/constants.js";
+import { findNodeCollision, getNextValidDirection, getOffsetGridPoint } from "./helpers/grid.js";
 import { debugToConsole } from "./helpers/logger.js";
 import { loopIds } from "./helpers/rng.js";
 
 interface SnakeProps {
+  version: SnakeColours;
   startingLength: number;
   targetLength: number;
 }
 
 interface SnakeParts {
+  version: SnakeColours;
   head: GridNode | undefined;
   body: GridNode[];
   end: GridNode[];
@@ -48,6 +50,7 @@ export class Snake {
     this.#parts = [head, ...body].filter(isNotUndefined);
 
     return {
+      version: this.#props.version,
       head,
       body,
       end,

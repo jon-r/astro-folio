@@ -1,6 +1,6 @@
 import type { GridPoint } from "../GridNode.js";
 import { GridNode } from "../GridNode.js";
-import {GRID_DIRECTION_VECTORS, GridDirection, OPPOSITE_EDGES, POSSIBLE_DIRECTIONS} from "./constants.js";
+import { GRID_DIRECTION_VECTORS, GridDirection, OPPOSITE_EDGES, POSSIBLE_DIRECTIONS } from "./constants.js";
 import { biasedRNG } from "./rng.js";
 
 export function makeGridPoints(rows: number, cols: number) {
@@ -18,16 +18,10 @@ export function makeGridPoints(rows: number, cols: number) {
   return gridPoints;
 }
 
-
-
 export function getNextValidDirection(currentDirection: GridDirection) {
   const possibleDirections = POSSIBLE_DIRECTIONS[currentDirection];
   return biasedRNG(possibleDirections, 1, 50);
 }
-
-
-
-
 
 export function getOppositeStartingPoint(node: GridNode | undefined, targetNodes: GridNode[]) {
   if (!node || node.startDirection === null) {
@@ -37,14 +31,12 @@ export function getOppositeStartingPoint(node: GridNode | undefined, targetNodes
   const { direction, matchingCoordinate } = OPPOSITE_EDGES[node.startDirection];
 
   return targetNodes.find(targetNode =>
-      targetNode.point[matchingCoordinate] === node.point[matchingCoordinate] && targetNode.startDirection === direction
+    targetNode.point[matchingCoordinate] === node.point[matchingCoordinate] && targetNode.startDirection === direction
   );
 }
 
-
-
 export function getOffsetGridPoint(arr1: GridPoint, direction: GridDirection): GridPoint {
-  const arr2 = GRID_DIRECTION_VECTORS[direction]
+  const arr2 = GRID_DIRECTION_VECTORS[direction];
   const [a1, b1] = arr1;
   const [a2, b2] = arr2;
 

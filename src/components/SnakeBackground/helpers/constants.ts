@@ -1,4 +1,4 @@
-import type {GridPoint} from "../GridNode.ts";
+import type { GridPoint } from "../GridNode.js";
 
 export enum GridDirection {
   Up,
@@ -7,11 +7,31 @@ export enum GridDirection {
   Left,
 }
 
-export const enum SnakeColours {
-  Background = "#111",
-  Body = "#044",
-  Head = "#066",
+export interface SnakeColours {
+  body: string;
+  head: string;
 }
+
+const snakeColoursGreen: SnakeColours = {
+  body: "#141",
+  head: "#3A3",
+};
+
+const snakeColoursRed: SnakeColours = {
+  body: "#411",
+  head: "#A33",
+};
+
+const snakeColoursBlue: SnakeColours = {
+  body: "#114",
+  head: "#33A",
+};
+
+export const SNAKE_COLOURS: [SnakeColours, SnakeColours, SnakeColours] = [
+  snakeColoursRed,
+  snakeColoursGreen,
+  snakeColoursBlue,
+];
 
 export const enum SnakeStatus {
   Ok,
@@ -20,6 +40,7 @@ export const enum SnakeStatus {
 }
 
 export const APPLE_COLOUR = "#530356";
+export const BACKGROUND_COLOUR = "#111";
 
 type PossibleDirections = [GridDirection, GridDirection, GridDirection];
 

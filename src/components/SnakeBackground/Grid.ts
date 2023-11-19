@@ -2,7 +2,7 @@ import { debounce } from "../../util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
-import { APPLE_COLOUR, SnakeColours } from "./helpers/constants.js";
+import {APPLE_COLOUR, BACKGROUND_COLOUR} from "./helpers/constants.js";
 import { findNodeCollision, makeGridPoints } from "./helpers/grid.js";
 import { SnakesManager } from "./SnakesManager.js";
 import { Ticker } from "./Ticker.js";
@@ -98,7 +98,7 @@ export class Grid {
     this.#element.height = innerHeight;
     this.#setupGridNodes(innerWidth, innerHeight);
 
-    this.#renderNodes(this.#gridNodes, SnakeColours.Background);
+    this.#renderNodes(this.#gridNodes, BACKGROUND_COLOUR);
 
     this.start();
   };

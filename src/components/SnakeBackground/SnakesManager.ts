@@ -1,10 +1,10 @@
 import type { ApplesManager } from "./ApplesManager.js";
 import type { GridNode, GridNodeProps } from "./GridNode.js";
-import { OPPOSITE_EDGES, SnakeColours, SnakeStatus } from "./helpers/constants.js";
+import { BACKGROUND_COLOUR, SNAKE_COLOURS, SnakeStatus } from "./helpers/constants.js";
+import { getOppositeStartingPoint } from "./helpers/grid.js";
 import { loopIds } from "./helpers/rng.js";
 import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
 import { Snake } from "./Snake.js";
-import {getOppositeStartingPoint} from "./helpers/grid.ts";
 
 interface SnakesProps extends MaybeSpawnProps {
   snakeStartingLength: number;
@@ -35,6 +35,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
     const newSnake = new Snake(startingNode, {
       targetLength,
       startingLength: this.#props.snakeStartingLength,
+      version: SNAKE_COLOURS[this.#iterator % 3]!,
     }, String(this.#iterator));
 
     this.#snakes.push(
@@ -53,11 +54,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
   }
 
   updateSnakePosition() {
-    const rendered: Record<SnakeColours, GridNode[]> = {
-      [SnakeColours.Background]: [],
-      [SnakeColours.Head]: [],
-      [SnakeColours.Body]: [],
-    };
+    const rendered: Record<string, GridNode[]> = {};
 
     const activeNodes: GridNode[] = [];
 
@@ -65,14 +62,30 @@ export class SnakesManager extends MaybeSpawn<Snake> {
       snake.moveSnake(this.#nodeProps);
 
       const snakeParts = snake.getSnakeAsParts();
+      const { head: headColour, body: bodyColour } = snakeParts.version;
 
       if (snakeParts.head) {
-        const colour = snake.status === SnakeStatus.Dying ? SnakeColours.Body : SnakeColours.Head;
-        rendered[colour].push(snakeParts.head);
+        const colour = snake.status === SnakeStatus.Dying ? bodyColour : headColour;
+
+        if (rendered[colour]) {
+          rendered[colour]!.push(snakeParts.head);
+        } else {
+          rendered[colour] = [snakeParts.head];
+        }
       }
 
-      rendered[SnakeColours.Background].push(...snakeParts.end);
-      rendered[SnakeColours.Body].push(...snakeParts.body);
+      if (rendered[bodyColour]) {
+        rendered[bodyColour]!.push(...snakeParts.body);
+      } else {
+        rendered[bodyColour] = snakeParts.body;
+      }
+
+      if (rendered[BACKGROUND_COLOUR]) {
+        rendered[BACKGROUND_COLOUR]!.push(...snakeParts.end);
+      } else {
+        rendered[BACKGROUND_COLOUR] = snakeParts.end;
+      }
+
       activeNodes.push(...snakeParts.body);
     });
 
