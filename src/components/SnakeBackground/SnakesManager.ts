@@ -64,6 +64,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
       const snakeParts = snake.getSnakeAsParts();
       const { head: headColour, body: bodyColour } = snakeParts.version;
 
+      // todo DRY all this out
       if (snakeParts.head) {
         const colour = snake.status === SnakeStatus.Dying ? bodyColour : headColour;
 

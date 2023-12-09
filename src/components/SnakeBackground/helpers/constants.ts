@@ -1,16 +1,14 @@
 import type { GridPoint } from "../GridNode.js";
 
-export enum GridDirection {
-  Up,
-  Right,
-  Down,
-  Left,
-}
+type HexCode = `#${string}`;
 
 export interface SnakeColours {
-  body: string;
-  head: string;
+  body: HexCode;
+  head: HexCode;
 }
+
+export const APPLE_COLOUR = "#530356";
+export const BACKGROUND_COLOUR = "#111";
 
 const snakeColoursGreen: SnakeColours = {
   body: "#141",
@@ -39,8 +37,12 @@ export const enum SnakeStatus {
   Dead,
 }
 
-export const APPLE_COLOUR = "#530356";
-export const BACKGROUND_COLOUR = "#111";
+export enum GridDirection {
+  Up,
+  Right,
+  Down,
+  Left,
+}
 
 type PossibleDirections = [GridDirection, GridDirection, GridDirection];
 
@@ -56,6 +58,7 @@ interface OppositeEdgeInfo {
   matchingCoordinate: 0 | 1;
 }
 
+// todo shorter keys
 export const OPPOSITE_EDGES: Record<GridDirection, OppositeEdgeInfo> = {
   [GridDirection.Up]: { direction: GridDirection.Down, matchingCoordinate: 0 },
   [GridDirection.Right]: { direction: GridDirection.Left, matchingCoordinate: 1 },

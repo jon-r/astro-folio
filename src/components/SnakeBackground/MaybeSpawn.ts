@@ -5,6 +5,8 @@ export interface MaybeSpawnProps {
   spawnChance: number;
   maxItems: number;
 }
+
+// todo helper rather than class method (maybe try to make all of this functional instead of a mix, use a custom 'store')
 export abstract class MaybeSpawn<T> {
   readonly #props: MaybeSpawnProps;
 

@@ -20,6 +20,7 @@ export class GridNode {
     this.id = point.toString();
   }
 
+  // make as const record like the similar ones
   #getStartDirection([x, y]: GridPoint, { rows, cols }: GridNodeProps) {
     if (x === 0) {
       return GridDirection.Right;

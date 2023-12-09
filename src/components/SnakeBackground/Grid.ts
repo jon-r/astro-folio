@@ -2,7 +2,7 @@ import { debounce } from "../../util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
-import {APPLE_COLOUR, BACKGROUND_COLOUR} from "./helpers/constants.js";
+import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./helpers/constants.js";
 import { findNodeCollision, makeGridPoints } from "./helpers/grid.js";
 import { SnakesManager } from "./SnakesManager.js";
 import { Ticker } from "./Ticker.js";
@@ -50,6 +50,7 @@ export class Grid {
     this.#squareBase = path;
   }
 
+  // todo think resize needs to reset snake count?
   init() {
     this.#ticker.addEventListener("tick", this.#handleTick);
     addEventListener("resize", this.#debouncedHandleResize);
@@ -72,6 +73,7 @@ export class Grid {
   #manageSnakes() {
     this.#snakes.maybeAddNewSnake(this.#starterNodes);
 
+    // todo better name?
     const snakesToRender = this.#snakes.updateSnakePosition();
 
     Object.entries(snakesToRender).forEach(([color, nodes]) => {
@@ -81,6 +83,7 @@ export class Grid {
     this.#snakes.handleCollisions(this.#starterNodes, this.#apples);
   }
 
+  // todo does this filter apples from state?
   #manageApples() {
     const availableNodes = this.#gridNodes.filter(gridNode => !findNodeCollision(gridNode, this.#snakes.activeNodes));
     const appleToRender = this.#apples.maybeAddNewApple(availableNodes);
@@ -120,6 +123,7 @@ export class Grid {
       (node) => node.startDirection !== null,
     );
 
+    // todo can similar be done for apples?
     this.#snakes.setNodeProps(nodeProps);
   }
 
