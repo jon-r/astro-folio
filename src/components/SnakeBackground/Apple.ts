@@ -1,8 +1,16 @@
 import type { GridNode } from "./GridNode.js";
-import { debugToConsole } from "./helpers/logger.js";
+import type {Logger} from "../shared/Logger.ts";
+
+interface AppleProps {
+  logger: Logger;
+  id?: string;
+}
 
 export class Apple {
-  constructor(readonly node: GridNode, readonly id = node.id) {
-    debugToConsole.log(`Apple spawned at ${node.id}`);
+  readonly id: string;
+  constructor(readonly node: GridNode, props: AppleProps) {
+    this.id = props.id || node.id;
+
+    props.logger.log(`Apple spawned at ${node.id}`)
   }
 }

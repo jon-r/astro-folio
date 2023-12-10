@@ -1,21 +1,26 @@
 import type { ApplesManager } from "./ApplesManager.js";
-import type { GridNode, GridNodeProps } from "./GridNode.js";
-import { BACKGROUND_COLOUR, SNAKE_COLOURS, SnakeStatus } from "./helpers/constants.js";
-import { getOppositeStartingPoint } from "./helpers/grid.js";
-import { loopIds } from "./helpers/rng.js";
-import { MaybeSpawn, type MaybeSpawnProps } from "./MaybeSpawn.js";
+import { BACKGROUND_COLOUR, SNAKE_COLOURS } from "./constants/colours.js";
+import { SnakeStatus } from "./constants/snake.js";
+import type { GridNode } from "./GridNode.js";
+import { MaybeSpawn, type MaybeSpawnProps } from "../shared/MaybeSpawn.js";
 import { Snake } from "./Snake.js";
+import {IdMaker} from "../shared/IdMaker.js";
+import type {GridDimensions, GridNodeStarter} from "./types/grid.js";
+import {OPPOSITE_EDGES} from "./constants/grid.js";
+import type {Logger} from "../shared/Logger.ts";
 
 interface SnakesProps extends MaybeSpawnProps {
-  snakeStartingLength: number;
+  startingLength: number;
+  logger: Logger;
 }
 
 export class SnakesManager extends MaybeSpawn<Snake> {
   readonly #props: SnakesProps;
 
   #snakes: Snake[] = [];
-  #nodeProps: GridNodeProps = { rows: 0, cols: 0 };
-  #iterator = 0;
+  #nodeDimensions: GridDimensions= { rows: 0, cols: 0 };
+  // #iterator = 0;
+  #idMaker: IdMaker;
 
   activeNodes: GridNode[] = [];
 
@@ -23,20 +28,23 @@ export class SnakesManager extends MaybeSpawn<Snake> {
     super(props);
 
     this.#props = props;
+    this.#idMaker = new IdMaker(props.maxItems);
   }
 
-  maybeAddNewSnake(availableNodes: GridNode[]) {
+  maybeAddNewSnake(availableNodes: GridNodeStarter[]) {
     return this.maybeSpawn(this.#snakes, this.#handleSpawnSnake, availableNodes);
   }
 
-  #handleSpawnSnake = (startingNode: GridNode, targetLength: number = this.#props.snakeStartingLength) => {
-    this.#iterator = loopIds(this.#iterator, this.#props.maxItems);
+  #handleSpawnSnake = (startingNode: GridNodeStarter, targetLength: number = this.#props.startingLength) => {
+    const {logger, startingLength} = this.#props;
+    const snakeId = this.#idMaker.getNextId();
 
     const newSnake = new Snake(startingNode, {
       targetLength,
-      startingLength: this.#props.snakeStartingLength,
-      version: SNAKE_COLOURS[this.#iterator % 3]!,
-    }, String(this.#iterator));
+      startingLength,
+      version: SNAKE_COLOURS[snakeId % SNAKE_COLOURS.length]!,
+      logger: logger
+    }, String(snakeId));
 
     this.#snakes.push(
       newSnake,
@@ -45,12 +53,20 @@ export class SnakesManager extends MaybeSpawn<Snake> {
     return newSnake;
   };
 
-  #getOppositeStartingPoint(oldNode: GridNode, starterNodes: GridNode[]) {
-    return getOppositeStartingPoint(oldNode, starterNodes);
+  #getOppositeStartingPoint(oldNode: GridNode, starterNodes: GridNodeStarter[]) {
+    if (!oldNode || oldNode.startDirection === null) {
+      throw new Error("collided with a non starter?");
+    }
+
+    const { direction, matchingCoordinate } = OPPOSITE_EDGES[oldNode.startDirection];
+
+    return starterNodes.find(targetNode =>
+        targetNode.point[matchingCoordinate] === oldNode.point[matchingCoordinate] && targetNode.startDirection === direction
+    );
   }
 
-  setNodeProps(nodeProps: GridNodeProps) {
-    this.#nodeProps = nodeProps;
+  setGridDimensions(nodeProps: GridDimensions) {
+    this.#nodeDimensions = nodeProps;
   }
 
   updateSnakePosition() {
@@ -59,7 +75,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
     const activeNodes: GridNode[] = [];
 
     this.#snakes.forEach((snake) => {
-      snake.moveSnake(this.#nodeProps);
+      snake.moveSnake(this.#nodeDimensions);
 
       const snakeParts = snake.getSnakeAsParts();
       const { head: headColour, body: bodyColour } = snakeParts.version;
@@ -95,7 +111,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
     return rendered;
   }
 
-  handleCollisions = (starterNodes: GridNode[], apples: ApplesManager) => {
+  handleCollisions = (starterNodes: GridNodeStarter[], apples: ApplesManager) => {
     this.#snakes
       .filter((snake) => snake.status === SnakeStatus.Ok)
       .forEach((snake) => {

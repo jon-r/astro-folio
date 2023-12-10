@@ -1,43 +1,61 @@
 import { debounce } from "../../util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
-import { GridNode, type GridNodeProps } from "./GridNode.js";
+import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
+import {GridNode} from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
-import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./helpers/constants.js";
-import { findNodeCollision, makeGridPoints } from "./helpers/grid.js";
 import { SnakesManager } from "./SnakesManager.js";
-import { Ticker } from "./Ticker.js";
+import { Ticker } from "../shared/Ticker.js";
+import type {GridDimensions, GridNodeStarter} from "./types/grid.js";
+import {Logger} from "../shared/Logger.js";
 
-type GridProps = GridOptions;
+interface GridProps extends GridOptions {
+  logger?: Logger;
+}
 
 export class Grid {
   readonly #element: HTMLCanvasElement;
   readonly #ctx: CanvasRenderingContext2D;
   readonly #props: GridProps;
 
+  // todo maybe have all the child classes as part of the constructor props, in the same pattern as nestjs
   readonly #squareBase: Path2D;
   readonly #ticker: Ticker;
   readonly #snakes: SnakesManager;
   readonly #apples: ApplesManager;
 
   #gridNodes: GridNode[] = [];
-  #starterNodes: GridNode[] = [];
+  #starterNodes: GridNodeStarter[] = [];
 
   constructor(element: HTMLCanvasElement, props: GridProps) {
-    const { gridSpacing, rectHeight, rectWidth } = props;
+    // todo group this config up (see the config file) and pass directly where its needed
+    const {
+      gridSpacing,
+      rectHeight,
+      rectWidth,
+      logger = new Logger(),
+      snakeStartingLength,
+      snakeSpawnChance,
+      snakeSpeedMs,
+      appleSpawnChance,
+      maxApples,
+      maxSnakes
+    } = props;
 
     this.#element = element;
     this.#ctx = element.getContext("2d", { alpha: false })!;
     this.#props = props;
 
-    this.#ticker = new Ticker({ interval: props.snakeSpeedMs });
+    this.#ticker = new Ticker({ interval: snakeSpeedMs });
     this.#snakes = new SnakesManager({
-      spawnChance: props.snakeSpawnChance,
-      snakeStartingLength: props.snakeStartingLength,
-      maxItems: props.maxSnakes,
+      spawnChance: snakeSpawnChance,
+      startingLength: snakeStartingLength,
+      maxItems: maxSnakes,
+      logger,
     });
     this.#apples = new ApplesManager({
-      spawnChance: props.appleSpawnChance,
-      maxItems: props.maxApples,
+      spawnChance: appleSpawnChance,
+      maxItems: maxApples,
+      logger,
     });
     const path = new Path2D();
     path.rect(
@@ -85,7 +103,7 @@ export class Grid {
 
   // todo does this filter apples from state?
   #manageApples() {
-    const availableNodes = this.#gridNodes.filter(gridNode => !findNodeCollision(gridNode, this.#snakes.activeNodes));
+    const availableNodes = this.#gridNodes.filter(gridNode => !gridNode.isWithin(this.#snakes.activeNodes));
     const appleToRender = this.#apples.maybeAddNewApple(availableNodes);
 
     if (!appleToRender) {
@@ -108,23 +126,38 @@ export class Grid {
 
   #debouncedHandleResize = debounce(this.#handleResize, 500);
 
+  #makeGridNodes(nodeProps: GridDimensions) {
+    const {rows, cols} = nodeProps;
+    const colArr = new Array(cols).fill(0);
+    const rowArr = new Array(rows).fill(0);
+
+    const gridNodes: GridNode[] = [];
+
+    colArr.forEach((_, x) => {
+      rowArr.forEach((__, y) => {
+        gridNodes.push(new GridNode([x,y], nodeProps));
+      });
+    });
+
+
+    this.#gridNodes = gridNodes;
+    this.#starterNodes = gridNodes.filter(
+        (node): node is GridNodeStarter => node.isStarterNode(),
+    );
+  }
+
   #setupGridNodes(width: number, height: number) {
     const { rectHeight, rectWidth } = this.#props;
 
     const rows = Math.ceil(height / rectHeight);
     const cols = Math.ceil(width / rectWidth);
 
-    const nodeProps: GridNodeProps = { rows, cols };
+    const nodeProps: GridDimensions = { rows, cols };
 
-    const gridNodes: GridNode[] = makeGridPoints(rows, cols).map((gridPoint) => new GridNode(gridPoint, nodeProps));
+    this.#makeGridNodes(nodeProps);
 
-    this.#gridNodes = gridNodes;
-    this.#starterNodes = gridNodes.filter(
-      (node) => node.startDirection !== null,
-    );
-
-    // todo can similar be done for apples?
-    this.#snakes.setNodeProps(nodeProps);
+    // todo can similar be done for apples? is it needed if just pass on 'move'?
+    this.#snakes.setGridDimensions(nodeProps);
   }
 
   #renderNodes(nodes: GridNode[], colour: string) {

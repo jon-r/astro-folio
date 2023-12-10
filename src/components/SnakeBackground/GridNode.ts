@@ -1,27 +1,23 @@
-import { GridDirection } from "./helpers/constants.js";
-
-export type GridPoint = [x: number, y: number];
-
-export interface GridNodeProps {
-  rows: number;
-  cols: number;
-}
+import {GRID_DIRECTION_VECTORS, GridDirection, POSSIBLE_DIRECTIONS} from "./constants/grid.js";
+import type {GridPoint, GridDimensions} from "./types/grid.js";
+import {Rng} from "../shared/Rng.js";
 
 export class GridNode {
   readonly id: string;
   readonly startDirection: GridDirection | null;
+  #rng = new Rng();
 
   constructor(
     readonly point: GridPoint,
-    props: GridNodeProps,
+    dimensions: GridDimensions,
     readonly owner: string | null = null,
   ) {
-    this.startDirection = this.#getStartDirection(point, props);
+    this.startDirection = this.#getStartDirection(point, dimensions);
     this.id = point.toString();
   }
 
   // make as const record like the similar ones
-  #getStartDirection([x, y]: GridPoint, { rows, cols }: GridNodeProps) {
+  #getStartDirection([x, y]: GridPoint, { rows, cols }: GridDimensions) {
     if (x === 0) {
       return GridDirection.Right;
     }
@@ -36,5 +32,32 @@ export class GridNode {
     }
 
     return null;
+  }
+
+  #getAdjacentNodePoint(direction: GridDirection): GridPoint {
+    const arr2 = GRID_DIRECTION_VECTORS[direction];
+    const [a1, b1] = this.point;
+    const [a2, b2] = arr2;
+
+    return [a1 + a2, b1 + b2];
+  }
+
+  getRandomAdjacentNode(currentDirection: GridDirection) {
+    const possibleDirections = POSSIBLE_DIRECTIONS[currentDirection];
+    const nextDirection = this.#rng.randomFrom(possibleDirections, 1, 50);
+    const nextPoint = this.#getAdjacentNodePoint(nextDirection);
+
+    return {
+      nextDirection,
+      nextPoint
+    }
+  }
+
+  isWithin(possibleNodes: GridNode[]) {
+    return possibleNodes.find(node => node.id === this.id && node.owner === this.owner);
+  }
+
+  isStarterNode() {
+    return this.startDirection !== null;
   }
 }

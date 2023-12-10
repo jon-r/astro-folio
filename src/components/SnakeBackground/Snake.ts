@@ -1,45 +1,43 @@
 import { isNotUndefined } from "../../util/generics.js";
 import type { ApplesManager } from "./ApplesManager.js";
-import { GridNode, type GridNodeProps } from "./GridNode.js";
-import { GridDirection, type SnakeColours, SnakeStatus } from "./helpers/constants.js";
-import { findNodeCollision, getNextValidDirection, getOffsetGridPoint } from "./helpers/grid.js";
-import { debugToConsole } from "./helpers/logger.js";
-import { loopIds } from "./helpers/rng.js";
+import type { SnakeColours } from "./constants/colours.js";
+import { GridDirection } from "./constants/grid.js";
+import { SnakeStatus } from "./constants/snake.js";
+import { GridNode } from "./GridNode.js";
+import type {GridDimensions, GridNodeStarter} from "./types/grid.js";
+import {IdMaker} from "../shared/IdMaker.js";
+import type {SnakeParts} from "./types/snakes.js";
+import {Logger} from "../shared/Logger.js";
 
 interface SnakeProps {
+  logger: Logger;
   version: SnakeColours;
   startingLength: number;
   targetLength: number;
-}
-
-interface SnakeParts {
-  version: SnakeColours;
-  head: GridNode | undefined;
-  body: GridNode[];
-  end: GridNode[];
 }
 
 export class Snake {
   readonly #props: SnakeProps;
 
   targetLength: number;
-  #direction: GridDirection | null;
+  #direction: GridDirection;
   #parts: GridNode[];
-  #iterator = 0;
+  #idMaker: IdMaker;
 
   status = SnakeStatus.Ok;
 
-  constructor(startingNode: GridNode, props: SnakeProps, readonly id: string) {
+  constructor(startingNode: GridNodeStarter, props: SnakeProps, readonly id: string) {
     const { targetLength } = props;
     this.#props = props;
 
+    this.#idMaker = new IdMaker(targetLength);
     this.targetLength = targetLength;
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
 
-    debugToConsole.log(
-      `Snake ${id} Started at ${startingNode.id}. Going ${GridDirection[startingNode.startDirection!]}`,
-    );
+    this.#props.logger.log(
+        `Snake ${id} Started at ${startingNode.id}. Going ${GridDirection[startingNode.startDirection!]}`,
+    )
   }
 
   getSnakeAsParts(): SnakeParts {
@@ -57,7 +55,7 @@ export class Snake {
     };
   }
 
-  moveSnake(nodeProps: GridNodeProps) {
+  moveSnake(dimensions: GridDimensions) {
     if (this.status === SnakeStatus.Dying) {
       this.targetLength = this.targetLength - 1;
 
@@ -70,19 +68,19 @@ export class Snake {
 
     const { nextDirection, nextPoint } = this.#getNextPoint();
 
-    this.#iterator = loopIds(this.#iterator, this.targetLength);
+    // this.#idMaker = loopIds(this.#idMaker, this.targetLength);
     this.#direction = nextDirection;
     this.#parts.unshift(
-      new GridNode(nextPoint, nodeProps, `snake-${this.id}-${this.#iterator}`),
+      new GridNode(nextPoint, dimensions, `snake-${this.id}-${this.#idMaker.getNextId()}`),
     );
   }
 
   handleCollisions(fatalNodes: GridNode[], applesManager: ApplesManager) {
     const head = this.#parts[0];
-    const snakeWillDie = findNodeCollision(head, fatalNodes);
+    const snakeWillDie = head?.isWithin(fatalNodes);
 
     if (snakeWillDie) {
-      debugToConsole.log(`Snake ${this.id} collided! at ${head?.id}`);
+      this.#props.logger.log(`Snake ${this.id} collided! at ${head?.id}`);
 
       this.status = SnakeStatus.Dying;
 
@@ -100,11 +98,10 @@ export class Snake {
   }
 
   getEdgeCollision(edgeNodes: GridNode[]) {
-    const head = this.#parts[0];
-    const edgeHit = findNodeCollision(head, edgeNodes);
+    const edgeHit = this.#parts[0]?.isWithin(edgeNodes);
 
     if (edgeHit) {
-      debugToConsole.log(`Snake ${this.id} hit Edge. Going ${GridDirection[this.#direction!]}`);
+      this.#props.logger.log(`Snake ${this.id} hit Edge. Going ${GridDirection[this.#direction!]}`);
     }
 
     return edgeHit;
@@ -112,25 +109,22 @@ export class Snake {
 
   #getNextPoint() {
     const head = this.#parts[0];
-    const currentDirection = this.#direction;
 
-    if (!head || currentDirection === null) {
+    if (!head) {
       throw new Error(
-        `Bad Snake, ${JSON.stringify({ currentDirection, head })}`,
+        `Bad Snake, ${JSON.stringify({ head })}`,
       );
     }
 
-    const nextDirection = getNextValidDirection(currentDirection);
+    const currentDirection = this.#direction;
+    const adjacentNode = head.getRandomAdjacentNode(currentDirection);
 
-    if (currentDirection !== nextDirection) {
-      debugToConsole.log(
-        `Snake ${this.id} now going ${GridDirection[nextDirection]}`,
+    if (currentDirection !== adjacentNode.nextDirection) {
+      this.#props.logger.log(
+        `Snake ${this.id} now going ${GridDirection[adjacentNode.nextDirection]}`,
       );
     }
 
-    return {
-      nextDirection,
-      nextPoint: getOffsetGridPoint(head.point, nextDirection),
-    };
+    return adjacentNode;
   }
 }
