@@ -1,12 +1,12 @@
 import { debounce } from "../../util/generics.js";
+import { Logger } from "../shared/Logger.js";
+import { Ticker } from "../shared/Ticker.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
-import {GridNode} from "./GridNode.js";
+import { GridNode } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
 import { SnakesManager } from "./SnakesManager.js";
-import { Ticker } from "../shared/Ticker.js";
-import type {GridDimensions, GridNodeStarter} from "./types/grid.js";
-import {Logger} from "../shared/Logger.js";
+import type { GridDimensions, GridNodeStarter } from "./types/grid.js";
 
 interface GridProps extends GridOptions {
   logger?: Logger;
@@ -38,7 +38,7 @@ export class Grid {
       snakeSpeedMs,
       appleSpawnChance,
       maxApples,
-      maxSnakes
+      maxSnakes,
     } = props;
 
     this.#element = element;
@@ -127,7 +127,7 @@ export class Grid {
   #debouncedHandleResize = debounce(this.#handleResize, 500);
 
   #makeGridNodes(nodeProps: GridDimensions) {
-    const {rows, cols} = nodeProps;
+    const { rows, cols } = nodeProps;
     const colArr = new Array(cols).fill(0);
     const rowArr = new Array(rows).fill(0);
 
@@ -135,14 +135,13 @@ export class Grid {
 
     colArr.forEach((_, x) => {
       rowArr.forEach((__, y) => {
-        gridNodes.push(new GridNode([x,y], nodeProps));
+        gridNodes.push(new GridNode([x, y], nodeProps));
       });
     });
 
-
     this.#gridNodes = gridNodes;
     this.#starterNodes = gridNodes.filter(
-        (node): node is GridNodeStarter => node.isStarterNode(),
+      (node): node is GridNodeStarter => node.isStarterNode(),
     );
   }
 

@@ -1,5 +1,6 @@
 import type { SnakeColours } from "../constants/colours.js";
-import type { GridNode } from "../GridNode.ts";
+import type { GridNode } from "../GridNode.js";
+import type { SnakeProps } from "../Snake.js";
 
 export interface SnakeParts {
   version: SnakeColours;
@@ -7,3 +8,5 @@ export interface SnakeParts {
   body: GridNode[];
   end: GridNode[];
 }
+
+export type SnakeSpawnProps = Partial<SnakeProps>;

@@ -1,4 +1,4 @@
-import type {GridConfig} from "./types/config.js";
+import type { GridConfig } from "./types/config.js";
 
 export const gridOptions = {
   rectHeight: 10,
@@ -28,6 +28,6 @@ export const GRID_CONFIG: GridConfig = {
   },
   apples: {
     max: 20,
-    spawnChance: 10
-  }
-}
+    spawnChance: 10,
+  },
+};

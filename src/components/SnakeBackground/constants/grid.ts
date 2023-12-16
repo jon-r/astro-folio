@@ -1,4 +1,4 @@
-import type { GridPoint } from "../types/grid.ts"
+import type { GridPoint } from "../types/grid.js";
 
 export enum GridDirection {
   Up,

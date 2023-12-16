@@ -1,19 +1,19 @@
-import type {GridDirection} from "../constants/grid.ts";
-import type {GridNode} from "../GridNode.ts";
+import type { GridDirection } from "../constants/grid.js";
+import type { GridNode } from "../GridNode.js";
 
 export type GridPoint = [x: number, y: number];
 
 export interface GridDimensions {
-    rows: number;
-    cols: number;
+  rows: number;
+  cols: number;
 }
 
 export interface GridNodeStarter extends GridNode {
-    startDirection: GridDirection;
+  startDirection: GridDirection;
 }
 
 export interface GridState {
-    size: GridDimensions;
-    nextIndex: number;
-    nodes: GridNode[];
+  size: GridDimensions;
+  nextIndex: number;
+  nodes: GridNode[];
 }

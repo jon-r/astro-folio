@@ -1,6 +1,6 @@
-import {GRID_DIRECTION_VECTORS, GridDirection, POSSIBLE_DIRECTIONS} from "./constants/grid.js";
-import type {GridPoint, GridDimensions} from "./types/grid.js";
-import {Rng} from "../shared/Rng.js";
+import { Rng } from "../shared/Rng.js";
+import { GRID_DIRECTION_VECTORS, GridDirection, POSSIBLE_DIRECTIONS } from "./constants/grid.js";
+import type { GridDimensions, GridPoint } from "./types/grid.js";
 
 export class GridNode {
   readonly id: string;
@@ -16,7 +16,6 @@ export class GridNode {
     this.id = point.toString();
   }
 
-  // make as const record like the similar ones
   #getStartDirection([x, y]: GridPoint, { rows, cols }: GridDimensions) {
     if (x === 0) {
       return GridDirection.Right;
@@ -49,8 +48,8 @@ export class GridNode {
 
     return {
       nextDirection,
-      nextPoint
-    }
+      nextPoint,
+    };
   }
 
   isWithin(possibleNodes: GridNode[]) {

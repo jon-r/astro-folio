@@ -1,5 +1,5 @@
 import type { GridNode } from "../SnakeBackground/GridNode.js";
-import {Rng} from "./Rng.js";
+import { Rng } from "./Rng.js";
 
 export interface MaybeSpawnProps {
   spawnChance: number;
@@ -9,11 +9,13 @@ export interface MaybeSpawnProps {
 // todo class property rather than abstract
 export class MaybeSpawn<T> {
   readonly #props: MaybeSpawnProps;
-  #rng = new Rng()
+
+  #rng = new Rng();
 
   protected constructor(props: MaybeSpawnProps) {
     this.#props = props;
   }
+
   protected maybeSpawn<Node extends GridNode>(currentItems: T[], onSpawn: (target: Node) => T, availableNodes: Node[]) {
     const shouldSpawn = currentItems.length < this.#props.maxItems && this.#rng.randomFlip(this.#props.spawnChance);
     if (!shouldSpawn) {

@@ -4,12 +4,12 @@ import type { SnakeColours } from "./constants/colours.js";
 import { GridDirection } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
 import { GridNode } from "./GridNode.js";
-import type {GridDimensions, GridNodeStarter} from "./types/grid.js";
+import type { GridDimensions, GridNodeStarter } from "./types/grid.js";
 // import {IdMaker} from "../shared/IdMaker.js";
-import type {SnakeParts} from "./types/snakes.js";
-import {Logger} from "../shared/Logger.js";
+import { Logger } from "../shared/Logger.js";
+import type { SnakeParts } from "./types/snakes.js";
 
-interface SnakeProps {
+export interface SnakeProps {
   logger: Logger;
   version: SnakeColours;
   startingLength: number;
@@ -19,6 +19,7 @@ interface SnakeProps {
 export class Snake {
   readonly #props: SnakeProps;
 
+  version: SnakeColours;
   targetLength: number;
   #direction: GridDirection;
   #parts: GridNode[];
@@ -27,17 +28,18 @@ export class Snake {
   status = SnakeStatus.Ok;
 
   constructor(startingNode: GridNodeStarter, props: SnakeProps, readonly id: string) {
-    const { targetLength } = props;
+    const { targetLength, version } = props;
     this.#props = props;
 
     // this.#idMaker = new IdMaker(targetLength);
+    this.version = version;
     this.targetLength = targetLength;
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
 
     this.#props.logger.log(
-        `Snake ${id} Started at ${startingNode.id}. Going ${GridDirection[startingNode.startDirection!]}`,
-    )
+      `Snake ${id} Started at ${startingNode.id}. Going ${GridDirection[startingNode.startDirection!]}`,
+    );
   }
 
   getSnakeAsParts(): SnakeParts {
