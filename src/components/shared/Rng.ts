@@ -10,7 +10,7 @@ export class Rng {
         const rng = Math.floor(Math.random() * list.length);
         const value = list.at(rng);
 
-        if (!value) {
+        if (typeof value === "undefined") {
             throw new Error("Attempt to get random from nothing");
         }
 

@@ -7,7 +7,7 @@ export interface MaybeSpawnProps {
 }
 
 // todo class property rather than abstract
-export abstract class MaybeSpawn<T> {
+export class MaybeSpawn<T> {
   readonly #props: MaybeSpawnProps;
   #rng = new Rng()
 

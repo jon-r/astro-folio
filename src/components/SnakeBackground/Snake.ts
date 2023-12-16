@@ -5,7 +5,7 @@ import { GridDirection } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
 import { GridNode } from "./GridNode.js";
 import type {GridDimensions, GridNodeStarter} from "./types/grid.js";
-import {IdMaker} from "../shared/IdMaker.js";
+// import {IdMaker} from "../shared/IdMaker.js";
 import type {SnakeParts} from "./types/snakes.js";
 import {Logger} from "../shared/Logger.js";
 
@@ -22,7 +22,7 @@ export class Snake {
   targetLength: number;
   #direction: GridDirection;
   #parts: GridNode[];
-  #idMaker: IdMaker;
+  // #idMaker: IdMaker;
 
   status = SnakeStatus.Ok;
 
@@ -30,7 +30,7 @@ export class Snake {
     const { targetLength } = props;
     this.#props = props;
 
-    this.#idMaker = new IdMaker(targetLength);
+    // this.#idMaker = new IdMaker(targetLength);
     this.targetLength = targetLength;
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
@@ -71,7 +71,7 @@ export class Snake {
     // this.#idMaker = loopIds(this.#idMaker, this.targetLength);
     this.#direction = nextDirection;
     this.#parts.unshift(
-      new GridNode(nextPoint, dimensions, `snake-${this.id}-${this.#idMaker.getNextId()}`),
+      new GridNode(nextPoint, dimensions),
     );
   }
 

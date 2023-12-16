@@ -10,7 +10,7 @@ export class GridNode {
   constructor(
     readonly point: GridPoint,
     dimensions: GridDimensions,
-    readonly owner: string | null = null,
+    // readonly owner: string | null = null,
   ) {
     this.startDirection = this.#getStartDirection(point, dimensions);
     this.id = point.toString();
@@ -43,8 +43,8 @@ export class GridNode {
   }
 
   getRandomAdjacentNode(currentDirection: GridDirection) {
-    const possibleDirections = POSSIBLE_DIRECTIONS[currentDirection];
-    const nextDirection = this.#rng.randomFrom(possibleDirections, 1, 50);
+    const possibleDirections = [...POSSIBLE_DIRECTIONS[currentDirection]];
+    const nextDirection = this.#rng.randomFrom(possibleDirections, 1, 10);
     const nextPoint = this.#getAdjacentNodePoint(nextDirection);
 
     return {
@@ -54,7 +54,7 @@ export class GridNode {
   }
 
   isWithin(possibleNodes: GridNode[]) {
-    return possibleNodes.find(node => node.id === this.id && node.owner === this.owner);
+    return possibleNodes.find(node => node.id === this.id);
   }
 
   isStarterNode() {
