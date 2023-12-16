@@ -1,3 +1,7 @@
+interface DebugOptions {
+  shouldLog: boolean;
+}
+
 interface GridOptions {
   size: number;
   spacing: number;
@@ -16,6 +20,7 @@ interface AppleOptions {
 }
 
 export interface GridConfig {
+  debug: DebugOptions;
   grid: GridOptions;
   snakes: SnakeOptions;
   apples: AppleOptions;

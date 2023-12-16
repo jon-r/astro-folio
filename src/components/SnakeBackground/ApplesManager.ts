@@ -5,7 +5,7 @@ import type { GridNode } from "./GridNode.js";
 
 interface ApplesManagerProps {
   spawnChance: number;
-  maxItems: number;
+  max: number;
   logger: Logger;
   rng: Rng;
 }
@@ -20,8 +20,8 @@ export class ApplesManager {
   }
 
   maybeAddNewApple(availableNodes: GridNode[]) {
-    const { maxItems, spawnChance, rng } = this.#props;
-    const willSpawn = this.apples.length < maxItems && rng.randomFlip(spawnChance);
+    const { max, spawnChance, rng } = this.#props;
+    const willSpawn = this.apples.length < max && rng.randomFlip(spawnChance);
 
     if (!willSpawn) {
       return;

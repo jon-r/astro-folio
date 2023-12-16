@@ -1,14 +1,16 @@
-const SHOULD_LOG = true;
+interface LoggerProps {
+  shouldLog: boolean;
+}
 
 export class Logger {
-  readonly #shouldLog: boolean;
+  #props: LoggerProps;
 
-  constructor(shouldLog = SHOULD_LOG) {
-    this.#shouldLog = shouldLog;
+  constructor(props: LoggerProps) {
+    this.#props = props;
   }
 
   log(...message: unknown[]) {
-    this.#shouldLog && console.log(...message);
+    this.#props.shouldLog && console.log(...message);
   }
 
   error(...message: unknown[]) {

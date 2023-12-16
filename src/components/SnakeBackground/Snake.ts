@@ -1,11 +1,11 @@
 import { isNotUndefined } from "../../util/generics.js";
+import { Logger } from "../shared/Logger.js";
 import type { ApplesManager } from "./ApplesManager.js";
 import type { SnakeColours } from "./constants/colours.js";
 import { GridDirection } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
 import type { GridNodeStarter } from "./types/grid.js";
-import { Logger } from "../shared/Logger.js";
 import type { SnakeParts } from "./types/snakes.js";
 
 export interface SnakeProps {

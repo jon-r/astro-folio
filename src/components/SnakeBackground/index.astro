@@ -4,24 +4,27 @@
 <canvas id="snakes" class="full-screen"></canvas>
 
 <style>
-  .full-screen {
-    position: fixed;
-    inset: 0;
-  }
+    .full-screen {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+    }
 </style>
 
 <script>
-  import { gridOptions } from "./GridOptions";
+  import {GRID_CONFIG} from "./GridOptions.js";
 
-  window.addEventListener("load", async () => {
-    const htmlElement = document.getElementById("snakes");
+  const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-    const { Grid } = await import("./Grid.js");
+  if (!mediaQuery?.matches) {
+    window.addEventListener("load", async () => {
+      const htmlElement = document.getElementById("snakes");
 
-    if (htmlElement instanceof HTMLCanvasElement) {
-      new Grid(htmlElement, gridOptions).init();
-    }
+      const {Grid} = await import("./Grid.js");
 
-    // todo pause button. maybe render it with the init()???
-  });
+      if (htmlElement instanceof HTMLCanvasElement) {
+        new Grid(htmlElement, {config: GRID_CONFIG}).init();
+      }
+    });
+  }
 </script>

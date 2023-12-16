@@ -2,7 +2,7 @@ import { IdMaker } from "../shared/IdMaker.js";
 import type { Logger } from "../shared/Logger.js";
 import type { Rng } from "../shared/Rng.js";
 import type { ApplesManager } from "./ApplesManager.js";
-import {BACKGROUND_COLOUR, type HexCode, SNAKE_COLOURS} from "./constants/colours.js";
+import { BACKGROUND_COLOUR, type HexCode, SNAKE_COLOURS } from "./constants/colours.js";
 import { OPPOSITE_EDGES } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
 import type { GridNode, GridNodeProps } from "./GridNode.js";
@@ -12,7 +12,7 @@ import type { SnakeSpawnProps } from "./types/snakes.js";
 
 interface SnakesManagerProps {
   spawnChance: number;
-  maxItems: number;
+  max: number;
   startingLength: number;
   logger: Logger;
   rng: Rng;
@@ -27,12 +27,12 @@ export class SnakesManager {
 
   constructor(props: SnakesManagerProps) {
     this.#props = props;
-    this.#idMaker = new IdMaker(props.maxItems);
+    this.#idMaker = new IdMaker(props.max);
   }
 
   maybeAddNewSnake(availableNodes: GridNodeStarter[]) {
-    const { maxItems, spawnChance, rng } = this.#props;
-    const willSpawn = this.#snakes.length < maxItems && rng.randomFlip(spawnChance);
+    const { max, spawnChance, rng } = this.#props;
+    const willSpawn = this.#snakes.length < max && rng.randomFlip(spawnChance);
 
     if (!willSpawn) {
       return;
@@ -82,20 +82,20 @@ export class SnakesManager {
     this.#snakes.forEach((snake) => {
       snake.moveSnake(nodeProps);
 
-      const {head, body, colours, end} = snake.getSnakeAsParts();
+      const { head, body, colours, end } = snake.getSnakeAsParts();
 
       const headColour = snake.status === SnakeStatus.Dying ? colours.body : colours.head;
 
       const entries: [color: HexCode, node: GridNode[]][] = [
         [headColour, head ? [head] : []],
         [colours.body, body],
-        [BACKGROUND_COLOUR, end]
-      ]
+        [BACKGROUND_COLOUR, end],
+      ];
 
       entries.forEach(([colour, nodes]) => {
         const existingNodes = rendered[colour] || [];
         rendered[colour] = [...existingNodes, ...nodes];
-      })
+      });
 
       activeNodes.push(...body);
     });

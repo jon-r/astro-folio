@@ -49,7 +49,7 @@ export class GridNode {
 
   getRandomAdjacentNode(currentDirection: GridDirection) {
     const possibleDirections = [...POSSIBLE_DIRECTIONS[currentDirection]];
-    const nextDirection = this.#props.rng.randomFrom(possibleDirections, 1, 20);
+    const nextDirection = this.#props.rng.randomFrom(possibleDirections, 1, 50);
     const nextPoint = this.#getAdjacentNodePoint(nextDirection);
 
     return {

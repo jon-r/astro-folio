@@ -5,13 +5,12 @@ import { Ticker } from "../shared/Ticker.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
-import type { GridOptions } from "./GridOptions.js";
 import { SnakesManager } from "./SnakesManager.js";
+import type { GridConfig } from "./types/config.js";
 import type { GridDimensions, GridNodeStarter } from "./types/grid.js";
 
-interface GridProps extends GridOptions {
-  logger?: Logger;
-  rng?: Rng;
+interface GridProps {
+  config: GridConfig;
 }
 
 export class Grid {
@@ -29,50 +28,37 @@ export class Grid {
   #starterNodes: GridNodeStarter[] = [];
 
   constructor(element: HTMLCanvasElement, props: GridProps) {
-    // todo group this config up (see the config file) and pass directly where its needed
-    const {
-      gridSpacing,
-      rectHeight,
-      rectWidth,
-      logger = new Logger(),
-      rng = new Rng(),
-      snakeStartingLength,
-      snakeSpawnChance,
-      snakeSpeedMs,
-      appleSpawnChance,
-      maxApples,
-      maxSnakes,
-    } = props;
+    const { config } = props;
 
     this.#element = element;
     this.#ctx = element.getContext("2d", { alpha: false })!;
     this.#props = props;
 
+    const rng = new Rng();
+    const logger = new Logger(config.debug);
+
     this.#gridNodeProps = {
-      rng,
       dimensions: this.#getGridDimensions(),
+      rng,
     };
 
-    this.#ticker = new Ticker({ interval: snakeSpeedMs });
+    this.#ticker = new Ticker({ interval: config.snakes.speedMs });
     this.#snakes = new SnakesManager({
-      spawnChance: snakeSpawnChance,
-      startingLength: snakeStartingLength,
-      maxItems: maxSnakes,
+      ...config.snakes,
       logger,
       rng,
     });
     this.#apples = new ApplesManager({
-      spawnChance: appleSpawnChance,
-      maxItems: maxApples,
+      ...config.apples,
       logger,
       rng,
     });
     const path = new Path2D();
     path.rect(
-      gridSpacing,
-      gridSpacing,
-      rectWidth - gridSpacing,
-      rectHeight - gridSpacing,
+      config.grid.spacing,
+      config.grid.spacing,
+      config.grid.size - config.grid.spacing,
+      config.grid.size - config.grid.spacing,
     );
 
     this.#squareBase = path;
@@ -82,19 +68,31 @@ export class Grid {
     this.#ticker.addEventListener("tick", this.#handleTick);
     addEventListener("resize", this.#debouncedHandleResize);
     this.#handleResize();
+    this.#insertPauseButton();
   }
 
-  start() {
+  #start() {
     this.#ticker.play();
   }
 
-  togglePause() {
+  #togglePause() {
     this.#ticker.toggle();
   }
 
   #handleTick = () => {
     this.#manageApples();
     this.#manageSnakes();
+  };
+
+  #insertPauseButton = () => {
+    const pauseButton = document.createElement("button");
+    pauseButton.addEventListener("click", () => this.#togglePause());
+    pauseButton.innerText = "Pause Snakes";
+    pauseButton.setAttribute("type", "button");
+
+    // todo more styles once the app is styles a bit more
+    pauseButton.setAttribute("style", "position: absolute;top: 1rem;left: 1rem;");
+    document.body.appendChild(pauseButton);
   };
 
   #manageSnakes() {
@@ -124,7 +122,6 @@ export class Grid {
     const { innerHeight, innerWidth } = window;
     this.#element.width = innerWidth;
     this.#element.height = innerHeight;
-    // this.#setupGridNodes(innerWidth, innerHeight);
 
     this.#gridNodeProps = {
       ...this.#gridNodeProps,
@@ -134,7 +131,7 @@ export class Grid {
     this.#makeGridNodes();
     this.#renderNodes(this.#gridNodes, BACKGROUND_COLOUR);
 
-    this.start();
+    this.#start();
   };
 
   #debouncedHandleResize = debounce(this.#handleResize, 500);
@@ -159,10 +156,10 @@ export class Grid {
   }
 
   #getGridDimensions(width: number = window.innerWidth, height: number = window.innerHeight) {
-    const { rectHeight, rectWidth } = this.#props;
+    const { size } = this.#props.config.grid;
 
-    const rows = Math.ceil(height / rectHeight);
-    const cols = Math.ceil(width / rectWidth);
+    const rows = Math.ceil(height / size);
+    const cols = Math.ceil(width / size);
 
     const dimensions: GridDimensions = { rows, cols };
 
@@ -171,13 +168,13 @@ export class Grid {
 
   #renderNodes(nodes: GridNode[], colour: string) {
     const renderedPath = new Path2D();
-    const { rectHeight, rectWidth } = this.#props;
+    const { size } = this.#props.config.grid;
 
     nodes.forEach((node) => {
       const [x, y] = node.point;
       const offsetMatrix = new DOMMatrix();
-      offsetMatrix.e = x * rectWidth;
-      offsetMatrix.f = y * rectHeight;
+      offsetMatrix.e = x * size;
+      offsetMatrix.f = y * size;
 
       renderedPath.addPath(this.#squareBase, offsetMatrix);
     });
