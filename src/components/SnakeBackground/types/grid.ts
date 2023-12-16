@@ -11,9 +11,3 @@ export interface GridDimensions {
 export interface GridNodeStarter extends GridNode {
   startDirection: GridDirection;
 }
-
-export interface GridState {
-  size: GridDimensions;
-  nextIndex: number;
-  nodes: GridNode[];
-}

@@ -1,47 +1,53 @@
 import { IdMaker } from "../shared/IdMaker.js";
 import type { Logger } from "../shared/Logger.js";
-import { MaybeSpawn, type MaybeSpawnProps } from "../shared/MaybeSpawn.js";
+import type { Rng } from "../shared/Rng.js";
 import type { ApplesManager } from "./ApplesManager.js";
-import { BACKGROUND_COLOUR, SNAKE_COLOURS } from "./constants/colours.js";
+import {BACKGROUND_COLOUR, type HexCode, SNAKE_COLOURS} from "./constants/colours.js";
 import { OPPOSITE_EDGES } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
-import type { GridNode } from "./GridNode.js";
+import type { GridNode, GridNodeProps } from "./GridNode.js";
 import { Snake } from "./Snake.js";
-import type { GridDimensions, GridNodeStarter } from "./types/grid.js";
+import type { GridNodeStarter } from "./types/grid.js";
 import type { SnakeSpawnProps } from "./types/snakes.js";
 
-interface SnakesProps extends MaybeSpawnProps {
+interface SnakesManagerProps {
+  spawnChance: number;
+  maxItems: number;
   startingLength: number;
   logger: Logger;
+  rng: Rng;
 }
 
-export class SnakesManager extends MaybeSpawn<Snake> {
-  readonly #props: SnakesProps;
+export class SnakesManager {
+  readonly #props: SnakesManagerProps;
+  readonly #idMaker: IdMaker;
 
   #snakes: Snake[] = [];
-  #nodeDimensions: GridDimensions = { rows: 0, cols: 0 };
-  // #iterator = 0;
-  #idMaker: IdMaker;
-
   activeNodes: GridNode[] = [];
 
-  constructor(props: SnakesProps) {
-    super(props);
-
+  constructor(props: SnakesManagerProps) {
     this.#props = props;
     this.#idMaker = new IdMaker(props.maxItems);
   }
 
   maybeAddNewSnake(availableNodes: GridNodeStarter[]) {
-    return this.maybeSpawn(this.#snakes, this.#handleSpawnSnake, availableNodes);
+    const { maxItems, spawnChance, rng } = this.#props;
+    const willSpawn = this.#snakes.length < maxItems && rng.randomFlip(spawnChance);
+
+    if (!willSpawn) {
+      return;
+    }
+    const newNode = rng.randomFrom(availableNodes);
+
+    return this.#handleSpawnSnake(newNode);
   }
 
   #handleSpawnSnake = (startingNode: GridNodeStarter, spawnProps: SnakeSpawnProps = {}) => {
-    const { logger, startingLength } = this.#props;
+    const { logger, startingLength, rng } = this.#props;
     const snakeId = this.#idMaker.getNextId();
 
     const newSnake = new Snake(startingNode, {
-      version: SNAKE_COLOURS[snakeId % SNAKE_COLOURS.length]!,
+      colours: rng.randomFrom(SNAKE_COLOURS),
       targetLength: startingLength,
       startingLength,
       logger,
@@ -60,53 +66,38 @@ export class SnakesManager extends MaybeSpawn<Snake> {
       throw new Error("collided with a non starter?");
     }
 
-    const { direction, matchingCoordinate } = OPPOSITE_EDGES[oldNode.startDirection];
-    const matchingPoint = oldNode.point[matchingCoordinate];
+    const { direction, coord } = OPPOSITE_EDGES[oldNode.startDirection];
+    const matchingPoint = oldNode.point[coord];
 
-    return starterNodes.find(({point, startDirection}) =>
-      point[matchingCoordinate] === matchingPoint && startDirection === direction
+    return starterNodes.find(({ point, startDirection }) =>
+      point[coord] === matchingPoint && startDirection === direction
     );
   }
 
-  setGridDimensions(nodeProps: GridDimensions) {
-    this.#nodeDimensions = nodeProps;
-  }
-
-  updateSnakePosition() {
+  moveSnakes(nodeProps: GridNodeProps) {
     const rendered: Record<string, GridNode[]> = {};
 
     const activeNodes: GridNode[] = [];
 
     this.#snakes.forEach((snake) => {
-      snake.moveSnake(this.#nodeDimensions);
+      snake.moveSnake(nodeProps);
 
-      const snakeParts = snake.getSnakeAsParts();
-      const { head: headColour, body: bodyColour } = snakeParts.version;
+      const {head, body, colours, end} = snake.getSnakeAsParts();
 
-      // todo DRY all this out
-      if (snakeParts.head) {
-        const colour = snake.status === SnakeStatus.Dying ? bodyColour : headColour;
+      const headColour = snake.status === SnakeStatus.Dying ? colours.body : colours.head;
 
-        if (rendered[colour]) {
-          rendered[colour]!.push(snakeParts.head);
-        } else {
-          rendered[colour] = [snakeParts.head];
-        }
-      }
+      const entries: [color: HexCode, node: GridNode[]][] = [
+        [headColour, head ? [head] : []],
+        [colours.body, body],
+        [BACKGROUND_COLOUR, end]
+      ]
 
-      if (rendered[bodyColour]) {
-        rendered[bodyColour]!.push(...snakeParts.body);
-      } else {
-        rendered[bodyColour] = snakeParts.body;
-      }
+      entries.forEach(([colour, nodes]) => {
+        const existingNodes = rendered[colour] || [];
+        rendered[colour] = [...existingNodes, ...nodes];
+      })
 
-      if (rendered[BACKGROUND_COLOUR]) {
-        rendered[BACKGROUND_COLOUR]!.push(...snakeParts.end);
-      } else {
-        rendered[BACKGROUND_COLOUR] = snakeParts.end;
-      }
-
-      activeNodes.push(...snakeParts.body);
+      activeNodes.push(...body);
     });
 
     this.activeNodes = activeNodes;
@@ -131,7 +122,7 @@ export class SnakesManager extends MaybeSpawn<Snake> {
           if (newPosition) {
             this.#handleSpawnSnake(newPosition, {
               targetLength: snake.targetLength,
-              version: snake.version,
+              colours: snake.colours,
             });
           }
         }

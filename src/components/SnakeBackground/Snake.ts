@@ -3,15 +3,14 @@ import type { ApplesManager } from "./ApplesManager.js";
 import type { SnakeColours } from "./constants/colours.js";
 import { GridDirection } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
-import { GridNode } from "./GridNode.js";
-import type { GridDimensions, GridNodeStarter } from "./types/grid.js";
-// import {IdMaker} from "../shared/IdMaker.js";
+import { GridNode, type GridNodeProps } from "./GridNode.js";
+import type { GridNodeStarter } from "./types/grid.js";
 import { Logger } from "../shared/Logger.js";
 import type { SnakeParts } from "./types/snakes.js";
 
 export interface SnakeProps {
   logger: Logger;
-  version: SnakeColours;
+  colours: SnakeColours;
   startingLength: number;
   targetLength: number;
 }
@@ -19,20 +18,18 @@ export interface SnakeProps {
 export class Snake {
   readonly #props: SnakeProps;
 
-  version: SnakeColours;
+  colours: SnakeColours;
   targetLength: number;
   #direction: GridDirection;
   #parts: GridNode[];
-  // #idMaker: IdMaker;
 
   status = SnakeStatus.Ok;
 
   constructor(startingNode: GridNodeStarter, props: SnakeProps, readonly id: string) {
-    const { targetLength, version } = props;
+    const { targetLength, colours } = props;
     this.#props = props;
 
-    // this.#idMaker = new IdMaker(targetLength);
-    this.version = version;
+    this.colours = colours;
     this.targetLength = targetLength;
     this.#direction = startingNode.startDirection;
     this.#parts = [startingNode];
@@ -50,14 +47,14 @@ export class Snake {
     this.#parts = [head, ...body].filter(isNotUndefined);
 
     return {
-      version: this.#props.version,
+      colours: this.colours,
       head,
       body,
       end,
     };
   }
 
-  moveSnake(dimensions: GridDimensions) {
+  moveSnake(nodeProps: GridNodeProps) {
     if (this.status === SnakeStatus.Dying) {
       this.targetLength = this.targetLength - 1;
 
@@ -70,10 +67,9 @@ export class Snake {
 
     const { nextDirection, nextPoint } = this.#getNextPoint();
 
-    // this.#idMaker = loopIds(this.#idMaker, this.targetLength);
     this.#direction = nextDirection;
     this.#parts.unshift(
-      new GridNode(nextPoint, dimensions),
+      new GridNode(nextPoint, nodeProps),
     );
   }
 

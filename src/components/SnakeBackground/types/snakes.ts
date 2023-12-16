@@ -3,7 +3,7 @@ import type { GridNode } from "../GridNode.js";
 import type { SnakeProps } from "../Snake.js";
 
 export interface SnakeParts {
-  version: SnakeColours;
+  colours: SnakeColours;
   head: GridNode | undefined;
   body: GridNode[];
   end: GridNode[];

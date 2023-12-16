@@ -1,15 +1,17 @@
 import { debounce } from "../../util/generics.js";
 import { Logger } from "../shared/Logger.js";
+import { Rng } from "../shared/Rng.js";
 import { Ticker } from "../shared/Ticker.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
-import { GridNode } from "./GridNode.js";
+import { GridNode, type GridNodeProps } from "./GridNode.js";
 import type { GridOptions } from "./GridOptions.js";
 import { SnakesManager } from "./SnakesManager.js";
 import type { GridDimensions, GridNodeStarter } from "./types/grid.js";
 
 interface GridProps extends GridOptions {
   logger?: Logger;
+  rng?: Rng;
 }
 
 export class Grid {
@@ -17,13 +19,13 @@ export class Grid {
   readonly #ctx: CanvasRenderingContext2D;
   readonly #props: GridProps;
 
-  // todo maybe have all the child classes as part of the constructor props, in the same pattern as nestjs
   readonly #squareBase: Path2D;
   readonly #ticker: Ticker;
   readonly #snakes: SnakesManager;
   readonly #apples: ApplesManager;
 
   #gridNodes: GridNode[] = [];
+  #gridNodeProps: GridNodeProps;
   #starterNodes: GridNodeStarter[] = [];
 
   constructor(element: HTMLCanvasElement, props: GridProps) {
@@ -33,6 +35,7 @@ export class Grid {
       rectHeight,
       rectWidth,
       logger = new Logger(),
+      rng = new Rng(),
       snakeStartingLength,
       snakeSpawnChance,
       snakeSpeedMs,
@@ -45,17 +48,24 @@ export class Grid {
     this.#ctx = element.getContext("2d", { alpha: false })!;
     this.#props = props;
 
+    this.#gridNodeProps = {
+      rng,
+      dimensions: this.#getGridDimensions(),
+    };
+
     this.#ticker = new Ticker({ interval: snakeSpeedMs });
     this.#snakes = new SnakesManager({
       spawnChance: snakeSpawnChance,
       startingLength: snakeStartingLength,
       maxItems: maxSnakes,
       logger,
+      rng,
     });
     this.#apples = new ApplesManager({
       spawnChance: appleSpawnChance,
       maxItems: maxApples,
       logger,
+      rng,
     });
     const path = new Path2D();
     path.rect(
@@ -68,7 +78,6 @@ export class Grid {
     this.#squareBase = path;
   }
 
-  // todo think resize needs to reset snake count?
   init() {
     this.#ticker.addEventListener("tick", this.#handleTick);
     addEventListener("resize", this.#debouncedHandleResize);
@@ -91,8 +100,7 @@ export class Grid {
   #manageSnakes() {
     this.#snakes.maybeAddNewSnake(this.#starterNodes);
 
-    // todo better name?
-    const snakesToRender = this.#snakes.updateSnakePosition();
+    const snakesToRender = this.#snakes.moveSnakes(this.#gridNodeProps);
 
     Object.entries(snakesToRender).forEach(([color, nodes]) => {
       this.#renderNodes(nodes, color);
@@ -101,7 +109,6 @@ export class Grid {
     this.#snakes.handleCollisions(this.#starterNodes, this.#apples);
   }
 
-  // todo does this filter apples from state?
   #manageApples() {
     const availableNodes = this.#gridNodes.filter(gridNode => !gridNode.isWithin(this.#snakes.activeNodes));
     const appleToRender = this.#apples.maybeAddNewApple(availableNodes);
@@ -110,15 +117,21 @@ export class Grid {
       return;
     }
 
-    this.#renderNodes([appleToRender], APPLE_COLOUR);
+    this.#renderNodes([appleToRender.node], APPLE_COLOUR);
   }
 
   #handleResize = () => {
     const { innerHeight, innerWidth } = window;
     this.#element.width = innerWidth;
     this.#element.height = innerHeight;
-    this.#setupGridNodes(innerWidth, innerHeight);
+    // this.#setupGridNodes(innerWidth, innerHeight);
 
+    this.#gridNodeProps = {
+      ...this.#gridNodeProps,
+      dimensions: this.#getGridDimensions(innerWidth, innerHeight),
+    };
+
+    this.#makeGridNodes();
     this.#renderNodes(this.#gridNodes, BACKGROUND_COLOUR);
 
     this.start();
@@ -126,8 +139,8 @@ export class Grid {
 
   #debouncedHandleResize = debounce(this.#handleResize, 500);
 
-  #makeGridNodes(nodeProps: GridDimensions) {
-    const { rows, cols } = nodeProps;
+  #makeGridNodes() {
+    const { rows, cols } = this.#gridNodeProps.dimensions;
     const colArr = new Array(cols).fill(0);
     const rowArr = new Array(rows).fill(0);
 
@@ -135,7 +148,7 @@ export class Grid {
 
     colArr.forEach((_, x) => {
       rowArr.forEach((__, y) => {
-        gridNodes.push(new GridNode([x, y], nodeProps));
+        gridNodes.push(new GridNode([x, y], this.#gridNodeProps));
       });
     });
 
@@ -145,18 +158,15 @@ export class Grid {
     );
   }
 
-  #setupGridNodes(width: number, height: number) {
+  #getGridDimensions(width: number = window.innerWidth, height: number = window.innerHeight) {
     const { rectHeight, rectWidth } = this.#props;
 
     const rows = Math.ceil(height / rectHeight);
     const cols = Math.ceil(width / rectWidth);
 
-    const nodeProps: GridDimensions = { rows, cols };
+    const dimensions: GridDimensions = { rows, cols };
 
-    this.#makeGridNodes(nodeProps);
-
-    // todo can similar be done for apples? is it needed if just pass on 'move'?
-    this.#snakes.setGridDimensions(nodeProps);
+    return dimensions;
   }
 
   #renderNodes(nodes: GridNode[], colour: string) {

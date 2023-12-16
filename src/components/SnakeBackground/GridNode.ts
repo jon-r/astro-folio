@@ -1,18 +1,24 @@
-import { Rng } from "../shared/Rng.js";
+import type { Rng } from "../shared/Rng.js";
 import { GRID_DIRECTION_VECTORS, GridDirection, POSSIBLE_DIRECTIONS } from "./constants/grid.js";
 import type { GridDimensions, GridPoint } from "./types/grid.js";
 
+export interface GridNodeProps {
+  rng: Rng;
+  dimensions: GridDimensions;
+}
+
 export class GridNode {
+  readonly #props: GridNodeProps;
+
   readonly id: string;
   readonly startDirection: GridDirection | null;
-  #rng = new Rng();
 
   constructor(
     readonly point: GridPoint,
-    dimensions: GridDimensions,
-    // readonly owner: string | null = null,
+    props: GridNodeProps,
   ) {
-    this.startDirection = this.#getStartDirection(point, dimensions);
+    this.#props = props;
+    this.startDirection = this.#getStartDirection(point, props.dimensions);
     this.id = point.toString();
   }
 
@@ -43,7 +49,7 @@ export class GridNode {
 
   getRandomAdjacentNode(currentDirection: GridDirection) {
     const possibleDirections = [...POSSIBLE_DIRECTIONS[currentDirection]];
-    const nextDirection = this.#rng.randomFrom(possibleDirections, 1, 10);
+    const nextDirection = this.#props.rng.randomFrom(possibleDirections, 1, 20);
     const nextPoint = this.#getAdjacentNodePoint(nextDirection);
 
     return {

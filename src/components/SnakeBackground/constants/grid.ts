@@ -18,15 +18,14 @@ export const POSSIBLE_DIRECTIONS: Record<GridDirection, PossibleDirections> = {
 
 interface OppositeEdgeInfo {
   direction: GridDirection;
-  matchingCoordinate: 0 | 1;
+  coord: 0 | 1;
 }
 
-// todo shorter keys
 export const OPPOSITE_EDGES: Record<GridDirection, OppositeEdgeInfo> = {
-  [GridDirection.Up]: { direction: GridDirection.Down, matchingCoordinate: 0 },
-  [GridDirection.Right]: { direction: GridDirection.Left, matchingCoordinate: 1 },
-  [GridDirection.Down]: { direction: GridDirection.Up, matchingCoordinate: 0 },
-  [GridDirection.Left]: { direction: GridDirection.Right, matchingCoordinate: 1 },
+  [GridDirection.Up]: { direction: GridDirection.Down, coord: 0 },
+  [GridDirection.Right]: { direction: GridDirection.Left, coord: 1 },
+  [GridDirection.Down]: { direction: GridDirection.Up, coord: 0 },
+  [GridDirection.Left]: { direction: GridDirection.Right, coord: 1 },
 };
 
 export const GRID_DIRECTION_VECTORS: Record<GridDirection, GridPoint> = {
