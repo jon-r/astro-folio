@@ -1,5 +1,5 @@
 import { isNotUndefined } from "../../util/generics.js";
-import { Logger } from "../shared/Logger.js";
+import { Logger } from "./shared/Logger.js";
 import type { ApplesManager } from "./ApplesManager.js";
 import type { SnakeColours } from "./constants/colours.js";
 import { GridDirection } from "./constants/grid.js";

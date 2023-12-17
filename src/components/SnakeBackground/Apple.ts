@@ -1,4 +1,4 @@
-import type { Logger } from "../shared/Logger.js";
+import type { Logger } from "./shared/Logger.js";
 import type { GridNode } from "./GridNode.js";
 
 interface AppleProps {

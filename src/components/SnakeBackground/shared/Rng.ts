@@ -1,3 +1,5 @@
+import {isNotUndefined} from "../../../util/generics.ts";
+
 export class Rng {
   randomFrom<T>(list: T[], biasedIndex: number, biasedMultiplier: number): T;
   randomFrom<T>(list: T[]): T;
@@ -10,11 +12,11 @@ export class Rng {
     const rng = Math.floor(Math.random() * list.length);
     const value = list.at(rng);
 
-    if (typeof value === "undefined") {
-      throw new Error("Attempt to get random from nothing");
+    if (isNotUndefined(value)) {
+      return value;
     }
 
-    return value;
+    throw new Error("Attempt to get random from nothing");
   }
 
   randomFlip(chancePercent: number) {

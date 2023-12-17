@@ -1,6 +1,6 @@
-import { IdMaker } from "../shared/IdMaker.js";
-import type { Logger } from "../shared/Logger.js";
-import type { Rng } from "../shared/Rng.js";
+import { IdMaker } from "./shared/IdMaker.js";
+import type { Logger } from "./shared/Logger.js";
+import type { Rng } from "./shared/Rng.js";
 import type { ApplesManager } from "./ApplesManager.js";
 import { BACKGROUND_COLOUR, type HexCode, SNAKE_COLOURS } from "./constants/colours.js";
 import { OPPOSITE_EDGES } from "./constants/grid.js";

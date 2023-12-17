@@ -1,7 +1,7 @@
 import { debounce } from "../../util/generics.js";
-import { Logger } from "../shared/Logger.js";
-import { Rng } from "../shared/Rng.js";
-import { Ticker } from "../shared/Ticker.js";
+import { Logger } from "./shared/Logger.js";
+import { Rng } from "./shared/Rng.js";
+import { Ticker } from "./shared/Ticker.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
@@ -91,7 +91,7 @@ export class Grid {
     pauseButton.setAttribute("type", "button");
 
     // todo more styles once the app is styles a bit more
-    pauseButton.setAttribute("style", "position: absolute;top: 1rem;left: 1rem;");
+    pauseButton.setAttribute("style", "position: absolute;bottom: 1rem;left: 1rem;");
     document.body.appendChild(pauseButton);
   };
 
