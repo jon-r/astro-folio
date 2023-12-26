@@ -64,11 +64,14 @@ export class Grid {
     this.#squareBase = path;
   }
 
-  init() {
+  init(autoplay = true) {
     this.#ticker.addEventListener("tick", this.#handleTick);
     addEventListener("resize", this.#debouncedHandleResize);
     this.#handleResize();
     this.#insertPauseButton();
+    if (autoplay) {
+      this.#start();
+    }
   }
 
   #start() {
@@ -130,8 +133,6 @@ export class Grid {
 
     this.#makeGridNodes();
     this.#renderNodes(this.#gridNodes, BACKGROUND_COLOUR);
-
-    this.#start();
   };
 
   #debouncedHandleResize = debounce(this.#handleResize, 500);

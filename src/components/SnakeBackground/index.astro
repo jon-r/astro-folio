@@ -1,15 +1,7 @@
 ---
 ---
 
-<canvas id="snakes" class="full-screen"></canvas>
-
-<style>
-    .full-screen {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-    }
-</style>
+<canvas id="snakes" class="fixed -z-10 inset-0"></canvas>
 
 <script>
   import {GRID_CONFIG} from "./GridOptions.js";
@@ -23,7 +15,7 @@
       const {Grid} = await import("./Grid.js");
 
       if (htmlElement instanceof HTMLCanvasElement) {
-        new Grid(htmlElement, {config: GRID_CONFIG}).init();
+        new Grid(htmlElement, {config: GRID_CONFIG}).init(false);
       }
     });
   }
