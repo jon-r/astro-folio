@@ -1,5 +1,5 @@
-import type { Rng } from "./shared/Rng.js";
 import { GRID_DIRECTION_VECTORS, GridDirection, POSSIBLE_DIRECTIONS } from "./constants/grid.js";
+import type { Rng } from "./shared/Rng.js";
 import type { GridDimensions, GridPoint } from "./types/grid.js";
 
 export interface GridNodeProps {

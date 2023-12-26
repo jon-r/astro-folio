@@ -9,10 +9,10 @@ export const GRID_CONFIG: GridConfig = {
     spacing: 1,
   },
   snakes: {
-    speedMs: 1000 / 25,
+    speedMs: 1000 / 20,
     max: 5,
     startingLength: 15,
-    spawnChance: 40,
+    spawnChance: 10,
   },
   apples: {
     max: 20,

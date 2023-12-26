@@ -1,4 +1,4 @@
-import {isNotUndefined} from "../../../util/generics.ts";
+import { isNotUndefined } from "../../../util/generics.js";
 
 export class Rng {
   randomFrom<T>(list: T[], biasedIndex: number, biasedMultiplier: number): T;

@@ -1,11 +1,11 @@
-import { IdMaker } from "./shared/IdMaker.js";
-import type { Logger } from "./shared/Logger.js";
-import type { Rng } from "./shared/Rng.js";
 import type { ApplesManager } from "./ApplesManager.js";
-import { BACKGROUND_COLOUR, type HexCode, SNAKE_COLOURS } from "./constants/colours.js";
+import { BACKGROUND_COLOUR, SNAKE_HUES, type SnakeColours } from "./constants/colours.js";
 import { OPPOSITE_EDGES } from "./constants/grid.js";
 import { SnakeStatus } from "./constants/snake.js";
 import type { GridNode, GridNodeProps } from "./GridNode.js";
+import { IdMaker } from "./shared/IdMaker.js";
+import type { Logger } from "./shared/Logger.js";
+import type { Rng } from "./shared/Rng.js";
 import { Snake } from "./Snake.js";
 import type { GridNodeStarter } from "./types/grid.js";
 import type { SnakeSpawnProps } from "./types/snakes.js";
@@ -42,12 +42,21 @@ export class SnakesManager {
     return this.#handleSpawnSnake(newNode);
   }
 
+  #getRandomSnakeColours = (): SnakeColours => {
+    const hue = this.#props.rng.randomFrom(SNAKE_HUES);
+
+    return {
+      head: `hsl(${hue},80%,15%)`,
+      body: `hsl(${hue},85%,10%)`,
+    };
+  };
+
   #handleSpawnSnake = (startingNode: GridNodeStarter, spawnProps: SnakeSpawnProps = {}) => {
-    const { logger, startingLength, rng } = this.#props;
+    const { logger, startingLength } = this.#props;
     const snakeId = this.#idMaker.getNextId();
 
     const newSnake = new Snake(startingNode, {
-      colours: rng.randomFrom(SNAKE_COLOURS),
+      colours: this.#getRandomSnakeColours(),
       targetLength: startingLength,
       startingLength,
       logger,
@@ -86,7 +95,7 @@ export class SnakesManager {
 
       const headColour = snake.status === SnakeStatus.Dying ? colours.body : colours.head;
 
-      const entries: [color: HexCode, node: GridNode[]][] = [
+      const entries: [color: string, node: GridNode[]][] = [
         [headColour, head ? [head] : []],
         [colours.body, body],
         [BACKGROUND_COLOUR, end],

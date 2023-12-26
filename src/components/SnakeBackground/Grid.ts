@@ -1,10 +1,10 @@
 import { debounce } from "../../util/generics.js";
-import { Logger } from "./shared/Logger.js";
-import { Rng } from "./shared/Rng.js";
-import { Ticker } from "./shared/Ticker.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
+import { Logger } from "./shared/Logger.js";
+import { Rng } from "./shared/Rng.js";
+import { Ticker } from "./shared/Ticker.js";
 import { SnakesManager } from "./SnakesManager.js";
 import type { GridConfig } from "./types/config.js";
 import type { GridDimensions, GridNodeStarter } from "./types/grid.js";

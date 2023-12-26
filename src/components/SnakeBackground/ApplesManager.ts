@@ -1,7 +1,7 @@
-import { Logger } from "./shared/Logger.js";
-import type { Rng } from "./shared/Rng.js";
 import { Apple } from "./Apple.js";
 import type { GridNode } from "./GridNode.js";
+import { Logger } from "./shared/Logger.js";
+import type { Rng } from "./shared/Rng.js";
 
 interface ApplesManagerProps {
   spawnChance: number;
