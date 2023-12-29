@@ -12,6 +12,7 @@
     "prettify": "dprint fmt"
   },
   "dependencies": {
+    "@astrojs/mdx": "^2.0.3",
     "@astrojs/react": "^3.0.7",
     "@astrojs/tailwind": "^5.0.4",
     "astro": "^4.0.6",

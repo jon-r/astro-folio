@@ -15,7 +15,7 @@
       const {Grid} = await import("./Grid.js");
 
       if (htmlElement instanceof HTMLCanvasElement) {
-        new Grid(htmlElement, {config: GRID_CONFIG}).init(false);
+        new Grid(htmlElement, {config: GRID_CONFIG}).init();
       }
     });
   }
