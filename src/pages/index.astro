@@ -1,16 +1,14 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import SnakeBackground from "../components/SnakeBackground/index.astro";
-import Logo from '../components/Logo.astro'
+import Hero from "../components/Hero.astro";
+import SideBar from '../components/SideBar.astro'
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Jon Richards - Web Developer">
   <SnakeBackground/>
-  <main class="container max-w-6xl">
-    <header class="h-screen bg-gradient-to-r from-slate-800 to-40% to-transparent p-4">
-      <Logo/>
-      <h1 class="text-8xl text-green-200">Jon Richards</h1>
-    </header>
+  <main class="flex-1 self-end">
+    <Hero />
   </main>
 </Layout>
 

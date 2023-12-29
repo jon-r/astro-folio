@@ -1,6 +1,9 @@
-/** @type {import('tailwindcss').Config} */
+import type {Config} from 'tailwindcss'
+
 export default {
-  content: ["./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}"],
+  content: [
+    "./src/**/*.{astro,ts,tsx}",
+  ],
   // todo colour palette to match old site? try to match the green?
   theme: {
     extend: {},
@@ -13,4 +16,4 @@ export default {
     },
   },
   plugins: [],
-};
+} satisfies Config;

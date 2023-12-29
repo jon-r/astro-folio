@@ -1,0 +1,32 @@
+---
+import type {PageSection} from "../../types/content.ts";
+import SectionTitle from "./SectionTitle.astro";
+import {isList, isParagraph, isSubtitle} from "../../pageContent/helpers.js";
+interface Props {
+  section: PageSection
+}
+
+
+
+const {section} = Astro.props;
+---
+<section class="text-green-200">
+  <SectionTitle title={section.title} />
+  {section.content.map(section => (
+    <>
+      {section.title && <h4>{section.title}</h4>}
+      {section.copy.map(copy => (
+        <>
+          {isSubtitle(copy) && <h6 set:html={copy.value} />}
+          {isParagraph(copy) && <p set:html={copy.value} />}
+          {isList(copy) && (
+            <ul>
+              {copy.value.map(text => <li set:html={text} />)}
+            </ul>
+        )}
+        </>
+      ))}
+
+    </>
+  ))}
+</section>

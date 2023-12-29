@@ -68,7 +68,7 @@ export class Grid {
     this.#ticker.addEventListener("tick", this.#handleTick);
     addEventListener("resize", this.#debouncedHandleResize);
     this.#handleResize();
-    this.#insertPauseButton();
+    this.#renderPauseButton();
     if (autoplay) {
       this.#start();
     }
@@ -87,14 +87,14 @@ export class Grid {
     this.#manageSnakes();
   };
 
-  #insertPauseButton = () => {
+  #renderPauseButton = () => {
     const pauseButton = document.createElement("button");
     pauseButton.addEventListener("click", () => this.#togglePause());
     pauseButton.innerText = "Pause Snakes";
     pauseButton.setAttribute("type", "button");
 
     // todo more styles once the app is styles a bit more
-    pauseButton.setAttribute("style", "position: absolute;bottom: 1rem;left: 1rem;");
+    pauseButton.classList.add("absolute", "bottom-4")
     document.body.appendChild(pauseButton);
   };
 
@@ -144,6 +144,7 @@ export class Grid {
 
     const gridNodes: GridNode[] = [];
 
+    // todo space grid out similar to old design. then make snakes thinner+longer
     colArr.forEach((_, x) => {
       rowArr.forEach((__, y) => {
         gridNodes.push(new GridNode([x, y], this.#gridNodeProps));
