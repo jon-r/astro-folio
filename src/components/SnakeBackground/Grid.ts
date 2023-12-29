@@ -94,7 +94,7 @@ export class Grid {
     pauseButton.setAttribute("type", "button");
 
     // todo more styles once the app is styles a bit more
-    pauseButton.classList.add("absolute", "bottom-4")
+    pauseButton.classList.add("absolute", "bottom-4");
     document.body.appendChild(pauseButton);
   };
 
