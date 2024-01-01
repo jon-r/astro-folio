@@ -1,8 +1,10 @@
-import { GRID_DIRECTION_VECTORS, GridDirection, POSSIBLE_DIRECTIONS } from "./constants/grid.js";
+import {GRID_DIRECTION_VECTORS, GridDirection, NO_TURN_BIAS, POSSIBLE_DIRECTIONS} from "./constants/grid.js";
 import type { Rng } from "./shared/Rng.js";
 import type { GridDimensions, GridPoint } from "./types/grid.js";
+import type {GridOptions} from "./types/config.js";
+import {isFactorOf} from "../../util/generics.ts";
 
-export interface GridNodeProps {
+export interface GridNodeProps extends GridOptions {
   rng: Rng;
   dimensions: GridDimensions;
 }
@@ -39,6 +41,22 @@ export class GridNode {
     return null;
   }
 
+  #getNextDirection(currentDirection: GridDirection) {
+    const {spacing, rng} = this.#props
+    const [x,y] = this.point;
+    const isFactor = isFactorOf(spacing);
+
+    if (!isFactor(x) || !isFactor(y)) {
+      return currentDirection;
+    }
+
+    return rng.from(
+      [currentDirection, ...POSSIBLE_DIRECTIONS[currentDirection]],
+      0,
+      NO_TURN_BIAS,
+    );
+  }
+
   #getAdjacentNodePoint(direction: GridDirection): GridPoint {
     const arr2 = GRID_DIRECTION_VECTORS[direction];
     const [a1, b1] = this.point;
@@ -47,9 +65,8 @@ export class GridNode {
     return [a1 + a2, b1 + b2];
   }
 
-  getRandomAdjacentNode(currentDirection: GridDirection) {
-    const possibleDirections = [...POSSIBLE_DIRECTIONS[currentDirection]];
-    const nextDirection = this.#props.rng.randomFrom(possibleDirections, 1, 50);
+  getNextNode(currentDirection: GridDirection) {
+    const nextDirection = this.#getNextDirection(currentDirection);
     const nextPoint = this.#getAdjacentNodePoint(nextDirection);
 
     return {

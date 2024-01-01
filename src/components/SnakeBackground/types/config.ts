@@ -1,20 +1,20 @@
-interface DebugOptions {
+export interface DebugOptions {
   shouldLog: boolean;
 }
 
-interface GridOptions {
+export interface GridOptions {
   size: number;
   spacing: number;
 }
 
-interface SnakeOptions {
+export interface SnakesOptions {
   speedMs: number;
   max: number;
   startingLength: number;
   spawnChance: number;
 }
 
-interface AppleOptions {
+export interface ApplesOptions {
   max: number;
   spawnChance: number;
 }
@@ -22,6 +22,6 @@ interface AppleOptions {
 export interface GridConfig {
   debug: DebugOptions;
   grid: GridOptions;
-  snakes: SnakeOptions;
-  apples: AppleOptions;
+  snakes: SnakesOptions;
+  apples: ApplesOptions;
 }

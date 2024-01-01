@@ -9,11 +9,9 @@ import type { Rng } from "./shared/Rng.js";
 import { Snake } from "./Snake.js";
 import type { GridNodeStarter } from "./types/grid.js";
 import type { SnakeSpawnProps } from "./types/snakes.js";
+import type {SnakesOptions} from "./types/config.js";
 
-interface SnakesManagerProps {
-  spawnChance: number;
-  max: number;
-  startingLength: number;
+interface SnakesManagerProps extends SnakesOptions {
   logger: Logger;
   rng: Rng;
 }
@@ -30,20 +28,20 @@ export class SnakesManager {
     this.#idMaker = new IdMaker(props.max);
   }
 
-  maybeAddNewSnake(availableNodes: GridNodeStarter[]) {
+  add(availableNodes: GridNodeStarter[]) {
     const { max, spawnChance, rng } = this.#props;
-    const willSpawn = this.#snakes.length < max && rng.randomFlip(spawnChance);
+    const willSpawn = this.#snakes.length < max && rng.flip(spawnChance);
 
     if (!willSpawn) {
       return;
     }
-    const newNode = rng.randomFrom(availableNodes);
+    const newNode = rng.from(availableNodes);
 
     return this.#handleSpawnSnake(newNode);
   }
 
   #getRandomSnakeColours = (): SnakeColours => {
-    const hue = this.#props.rng.randomFrom(SNAKE_HUES);
+    const hue = this.#props.rng.from(SNAKE_HUES);
 
     return {
       head: `hsl(${hue},80%,15%)`,
@@ -83,7 +81,7 @@ export class SnakesManager {
     );
   }
 
-  moveSnakes(nodeProps: GridNodeProps) {
+  move(nodeProps: GridNodeProps) {
     const rendered: Record<string, GridNode[]> = {};
 
     const activeNodes: GridNode[] = [];

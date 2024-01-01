@@ -36,3 +36,7 @@ export function debounce(
 export function isNotUndefined<T>(item: T | undefined): item is T {
   return typeof item !== "undefined";
 }
+
+export function isFactorOf(target: number) {
+  return (value: number) => value && !(value % target);
+}

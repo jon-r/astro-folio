@@ -91,7 +91,7 @@ export class Snake {
 
     if (snakeAteApple) {
       this.targetLength += this.#props.startingLength;
-      applesManager.destroyApple(snakeAteApple.id);
+      applesManager.remove(snakeAteApple.id);
     }
   }
 
@@ -115,7 +115,7 @@ export class Snake {
     }
 
     const currentDirection = this.#direction;
-    const adjacentNode = head.getRandomAdjacentNode(currentDirection);
+    const adjacentNode = head.getNextNode(currentDirection);
 
     if (currentDirection !== adjacentNode.nextDirection) {
       this.#props.logger.log(

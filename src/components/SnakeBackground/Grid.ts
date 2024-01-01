@@ -1,4 +1,4 @@
-import { debounce } from "../../util/generics.js";
+import {debounce, isFactorOf} from "../../util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
@@ -38,27 +38,31 @@ export class Grid {
     const logger = new Logger(config.debug);
 
     this.#gridNodeProps = {
+      ...config.grid,
       dimensions: this.#getGridDimensions(),
       rng,
     };
 
     this.#ticker = new Ticker({ interval: config.snakes.speedMs });
+
     this.#snakes = new SnakesManager({
       ...config.snakes,
       logger,
       rng,
     });
+
     this.#apples = new ApplesManager({
       ...config.apples,
       logger,
       rng,
     });
+
     const path = new Path2D();
     path.rect(
-      config.grid.spacing,
-      config.grid.spacing,
-      config.grid.size - config.grid.spacing,
-      config.grid.size - config.grid.spacing,
+      0,
+      0,
+      config.grid.size,
+      config.grid.size,
     );
 
     this.#squareBase = path;
@@ -99,9 +103,9 @@ export class Grid {
   };
 
   #manageSnakes() {
-    this.#snakes.maybeAddNewSnake(this.#starterNodes);
+    this.#snakes.add(this.#starterNodes);
 
-    const snakesToRender = this.#snakes.moveSnakes(this.#gridNodeProps);
+    const snakesToRender = this.#snakes.move(this.#gridNodeProps);
 
     Object.entries(snakesToRender).forEach(([color, nodes]) => {
       this.#renderNodes(nodes, color);
@@ -111,8 +115,9 @@ export class Grid {
   }
 
   #manageApples() {
-    const availableNodes = this.#gridNodes.filter(gridNode => !gridNode.isWithin(this.#snakes.activeNodes));
-    const appleToRender = this.#apples.maybeAddNewApple(availableNodes);
+    const availableNodes = this.#gridNodes
+      .filter(gridNode => !gridNode.isWithin(this.#snakes.activeNodes));
+    const appleToRender = this.#apples.add(availableNodes);
 
     if (!appleToRender) {
       return;
@@ -138,16 +143,19 @@ export class Grid {
   #debouncedHandleResize = debounce(this.#handleResize, 500);
 
   #makeGridNodes() {
+    const { spacing } = this.#props.config.grid;
     const { rows, cols } = this.#gridNodeProps.dimensions;
     const colArr = new Array(cols).fill(0);
     const rowArr = new Array(rows).fill(0);
+    const isFactor = isFactorOf(spacing);
 
     const gridNodes: GridNode[] = [];
 
-    // todo space grid out similar to old design. then make snakes thinner+longer
     colArr.forEach((_, x) => {
       rowArr.forEach((__, y) => {
-        gridNodes.push(new GridNode([x, y], this.#gridNodeProps));
+        if (isFactor(y) || isFactor(x)) {
+          gridNodes.push(new GridNode([x, y], this.#gridNodeProps));
+        }
       });
     });
 

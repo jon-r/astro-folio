@@ -1,9 +1,9 @@
 import { isNotUndefined } from "../../../util/generics.js";
 
 export class Rng {
-  randomFrom<T>(list: T[], biasedIndex: number, biasedMultiplier: number): T;
-  randomFrom<T>(list: T[]): T;
-  randomFrom<T>(list: T[], biasedIndex?: number, biasedMultiplier?: number) {
+  from<T>(list: T[], biasedIndex: number, biasedMultiplier: number): T;
+  from<T>(list: T[]): T;
+  from<T>(list: T[], biasedIndex?: number, biasedMultiplier?: number) {
     if (biasedIndex && list[biasedIndex]) {
       const biasedArr: T[] = new Array(biasedMultiplier).fill(list[biasedIndex]);
       list.push(...biasedArr);
@@ -19,7 +19,7 @@ export class Rng {
     throw new Error("Attempt to get random from nothing");
   }
 
-  randomFlip(chancePercent: number) {
+  flip(chancePercent: number) {
     return (Math.random() * 100) < chancePercent;
   }
 }

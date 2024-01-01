@@ -7,13 +7,14 @@ export enum GridDirection {
   Left,
 }
 
-type PossibleDirections = [GridDirection, GridDirection, GridDirection];
+type PossibleDirections = [GridDirection, GridDirection];
 
+export const NO_TURN_BIAS = 50;
 export const POSSIBLE_DIRECTIONS: Record<GridDirection, PossibleDirections> = {
-  [GridDirection.Up]: [GridDirection.Left, GridDirection.Up, GridDirection.Right],
-  [GridDirection.Right]: [GridDirection.Up, GridDirection.Right, GridDirection.Down],
-  [GridDirection.Down]: [GridDirection.Right, GridDirection.Down, GridDirection.Left],
-  [GridDirection.Left]: [GridDirection.Down, GridDirection.Left, GridDirection.Up],
+  [GridDirection.Up]: [GridDirection.Left, GridDirection.Right],
+  [GridDirection.Right]: [GridDirection.Up, GridDirection.Down],
+  [GridDirection.Down]: [GridDirection.Right, GridDirection.Left],
+  [GridDirection.Left]: [GridDirection.Down, GridDirection.Up],
 };
 
 interface OppositeEdgeInfo {

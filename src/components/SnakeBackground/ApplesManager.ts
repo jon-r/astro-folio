@@ -2,10 +2,9 @@ import { Apple } from "./Apple.js";
 import type { GridNode } from "./GridNode.js";
 import { Logger } from "./shared/Logger.js";
 import type { Rng } from "./shared/Rng.js";
+import type {ApplesOptions} from "./types/config.js";
 
-interface ApplesManagerProps {
-  spawnChance: number;
-  max: number;
+interface ApplesManagerProps extends ApplesOptions {
   logger: Logger;
   rng: Rng;
 }
@@ -19,14 +18,14 @@ export class ApplesManager {
     this.#props = props;
   }
 
-  maybeAddNewApple(availableNodes: GridNode[]) {
+  add(availableNodes: GridNode[]) {
     const { max, spawnChance, rng } = this.#props;
-    const willSpawn = this.apples.length < max && rng.randomFlip(spawnChance);
+    const willSpawn = this.apples.length < max && rng.flip(spawnChance);
 
     if (!willSpawn) {
       return;
     }
-    const newNode = rng.randomFrom(availableNodes);
+    const newNode = rng.from(availableNodes);
 
     return this.#handleSpawnApple(newNode);
   }
@@ -38,7 +37,7 @@ export class ApplesManager {
     return newApple;
   };
 
-  destroyApple(point: string) {
+  remove(point: string) {
     this.#props.logger.log(`Apple ${point} eaten!`);
     this.apples = [...this.apples].filter(apple => apple.id !== point);
   }

@@ -5,13 +5,13 @@ export const GRID_CONFIG: GridConfig = {
     shouldLog: false,
   },
   grid: {
-    size: 10,
-    spacing: 1,
+    size: 4,
+    spacing: 16,
   },
   snakes: {
     speedMs: 1000 / 20,
     max: 5,
-    startingLength: 15,
+    startingLength: 30,
     spawnChance: 10,
   },
   apples: {
