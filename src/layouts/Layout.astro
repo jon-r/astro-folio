@@ -19,7 +19,9 @@ const { title } = Astro.props;
   </head>
   <body class="bg-green-700 flex h-screen text-green-200 font-normal">
     <SideBar />
-    <slot />
+    <main class="p-8 overflow-y-auto flex-1">
+      <slot />
+    </main>
   </body>
 </html>
 

@@ -3,16 +3,28 @@ import type { MarkdownLayoutProps } from "astro";
 
 import Layout from "./Layout.astro";
 
-type Props = MarkdownLayoutProps<{ title: string }>;
+type Props = MarkdownLayoutProps<{
+  title: string;
+  linkText?: string;
+  linkPath: string;
+}>;
 
-const { frontmatter } = Astro.props;
+const { frontmatter } = Astro.props satisfies Props;
 ---
-<Layout title={frontmatter.title}>
-  <main class="p-8 overflow-y-auto flex-1">
-    <section class="max-w-4xl content bg-green-100 text-green-700 p-8 rounded-md mx-auto">
-      <slot/>
+<Layout title={`Jon Richards - ${frontmatter.title}`}>
+    <section class="max-w-4xl mx-auto">
+      <header class="bg-green-500 text-green-200 p-8 rounded-t-md border-b-8 border-current">
+        <h1 class="text-5xl font-bold">{frontmatter.title}</h1>
+        {frontmatter.linkText && (
+            <a class="hover:text-green-300 hover:underline text-xl" href={frontmatter.linkPath} download >
+              {frontmatter.linkText}
+            </a>
+        )}
+      </header>
+      <div class="content bg-green-100 text-green-700 p-8 rounded-b-md">
+        <slot/>
+      </div>
     </section>
-  </main>
 </Layout>
 
 <style>

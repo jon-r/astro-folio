@@ -1,16 +1,31 @@
 ---
-import Logo from "./Logo.astro";
+import { Image } from "astro:assets";
 import Link from "./Link.astro";
+
+import logo from "../assets/logo.svg";
+import email from "../assets/email.svg";
+import linkedin from "../assets/linkedin.svg";
 ---
 
-<aside class="bg-green-500/50 backdrop-blur-sm w-24 p-4">
+<aside class="bg-green-500/50 backdrop-blur-sm w-24 p-4 flex flex-col justify-between">
   <nav>
-    <Logo/>
+    <a href="/">
+      <Image class="w-full" src={logo} alt="Jon Richards"/>
+    </a>
     <div class="origin-bottom-left translate-x-4 rotate-90 w-max text-2xl font-bold">
       <Link to="/">home</Link>
       <Link to="/about">about</Link>
       <Link to="/demos">demos</Link>
     </div>
   </nav>
-  <!--  linkedin + email + ?? -->
+
+  <div class="flex gap-2">
+    <a class="flex-1" href="mailto:Jon.Richards@outlook.com">
+      <Image class="w-full" src={email} alt="Jon.Richards@outlook.com"/>
+    </a>
+    <a class="flex-1" href="https://linkedin.com/in/jon-r90">
+      <!-- todo redo this icon?? -->
+      <Image class="w-full" src={linkedin} alt="linkedin.com/in/jon-r90"/>
+    </a>
+  </div>
 </aside>

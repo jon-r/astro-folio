@@ -1,6 +1,8 @@
 ---
 layout: '../layouts/Content.astro'
-title: 'Jon Richards - About Me'
+title: 'About Me'
+linkText: 'Download CV (pdf)'
+linkPath: '/JonR-CV_Nov22.pdf' # todo update this CV
 ---
 
 ## Skills
@@ -19,11 +21,11 @@ Compilers (Webpack, esbuild, SWC), Micro-services (Module Federation, Event Driv
 
 ### GlobalLogic - Software Consultancy
 
-TODO
+[//]: # (TODO)
 
 #### _**2023-Present -** Senior Consultant (Javascript Tech Lead)_
 
-TODO
+[//]: # (TODO)
 
 ##### SkillSet:
 

@@ -1,13 +1,19 @@
 ---
-import Hero from "../components/Hero.astro";
 import SnakeBackground from "../components/SnakeBackground/index.astro";
 import Layout from "../layouts/Layout.astro";
+import Link from "../components/Link.astro";
 ---
 
 <Layout title="Jon Richards - Web Developer">
   <SnakeBackground/>
-  <main class="flex-1 self-end">
-    <Hero />
-  </main>
+  <header class="absolute left-0 right-0 bottom-32 text-right bg-gradient-to-l from-green-500/80 to-60% to-green-500/0 p-4 font-bold">
+    <h1 class="text-8xl text-green-300">Jon Richards</h1>
+    <h3 class="text-4xl">Senior/Lead Developer</h3>
+    <hr class="w-48 mt-2 inline-block border-b-2 border-green-300" />
+    <nav>
+      <Link to="/about">about</Link>
+      <Link to="/demos">demos</Link>
+    </nav>
+  </header>
 </Layout>
 
