@@ -10,7 +10,7 @@ interface Props {
 
 const {section} = Astro.props;
 ---
-<section class="text-green-200">
+<section>
   <SectionTitle title={section.title} />
   {section.content.map(section => (
     <>

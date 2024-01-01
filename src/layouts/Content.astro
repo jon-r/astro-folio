@@ -8,7 +8,7 @@ const {frontmatter} = Astro.props;
 ---
 <Layout title={frontmatter.title}>
   <main class="p-8 overflow-y-auto flex-1">
-    <section class="max-w-4xl content bg-slate-200 text-green-900 p-8 rounded-md mx-auto">
+    <section class="max-w-4xl content bg-green-100 text-green-700 p-8 rounded-md mx-auto">
       <slot/>
     </section>
   </main>
@@ -16,16 +16,20 @@ const {frontmatter} = Astro.props;
 
 <style>
   .content {
+    :global(h2,h3,strong) {
+      @apply font-bold;
+    }
+
     :global(h2,h3) {
-      @apply text-2xl mb-6;
+      @apply text-2xl mb-3;
     }
 
     :global(h2) {
-      @apply border-b-2 border-green-600
+      @apply border-b-2 border-green-300
     }
 
     :global(h3) {
-      @apply text-green-600;
+      @apply text-green-400;
     }
 
     :global(hr) {
@@ -33,7 +37,7 @@ const {frontmatter} = Astro.props;
     }
 
     :global(h4) {
-      @apply text-xl mb-4;
+      @apply text-green-400 text-xl mb-2;
     }
 
     :global(ul) {
@@ -41,7 +45,7 @@ const {frontmatter} = Astro.props;
     }
 
     :global(p,ul,table) {
-      @apply text-slate-900 font-light mb-4;
+      @apply mb-4;
     }
 
     :global(table,thead,tr) {
@@ -57,7 +61,7 @@ const {frontmatter} = Astro.props;
     }
 
     :global(a) {
-      @apply text-green-600 hover:text-green-800 hover:underline
+      @apply text-green-400 hover:text-green-300 hover:underline
     }
   }
 </style>

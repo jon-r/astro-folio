@@ -2,7 +2,7 @@ import { Apple } from "./Apple.js";
 import type { GridNode } from "./GridNode.js";
 import { Logger } from "./shared/Logger.js";
 import type { Rng } from "./shared/Rng.js";
-import type {ApplesOptions} from "./types/config.js";
+import type { ApplesOptions } from "./types/config.js";
 
 interface ApplesManagerProps extends ApplesOptions {
   logger: Logger;

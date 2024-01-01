@@ -1,6 +1,6 @@
-import {debounce, isFactorOf} from "../../util/generics.js";
+import { debounce, isFactorOf } from "../../util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
-import { APPLE_COLOUR, BACKGROUND_COLOUR } from "./constants/colours.js";
+import { APPLE_COLOUR, GRID_COLOUR } from "./constants/colours.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
 import { Logger } from "./shared/Logger.js";
 import { Rng } from "./shared/Rng.js";
@@ -14,7 +14,7 @@ interface GridProps {
 }
 
 export class Grid {
-  readonly #element: HTMLCanvasElement;
+  readonly #canvasElement: HTMLCanvasElement;
   readonly #ctx: CanvasRenderingContext2D;
   readonly #props: GridProps;
 
@@ -27,11 +27,12 @@ export class Grid {
   #gridNodeProps: GridNodeProps;
   #starterNodes: GridNodeStarter[] = [];
 
-  constructor(element: HTMLCanvasElement, props: GridProps) {
+  constructor(canvasElement: HTMLCanvasElement, props: GridProps) {
     const { config } = props;
 
-    this.#element = element;
-    this.#ctx = element.getContext("2d", { alpha: false })!;
+    this.#canvasElement = canvasElement;
+    // this.#canvasElement.style.backgroundColor = 'red'
+    this.#ctx = canvasElement.getContext("2d", { alpha: true })!;
     this.#props = props;
 
     const rng = new Rng();
@@ -98,7 +99,7 @@ export class Grid {
     pauseButton.setAttribute("type", "button");
 
     // todo more styles once the app is styles a bit more
-    pauseButton.classList.add("absolute", "bottom-4");
+    pauseButton.classList.add("absolute", "top-4", "right-4");
     document.body.appendChild(pauseButton);
   };
 
@@ -128,8 +129,8 @@ export class Grid {
 
   #handleResize = () => {
     const { innerHeight, innerWidth } = window;
-    this.#element.width = innerWidth;
-    this.#element.height = innerHeight;
+    this.#canvasElement.width = innerWidth;
+    this.#canvasElement.height = innerHeight;
 
     this.#gridNodeProps = {
       ...this.#gridNodeProps,
@@ -137,7 +138,7 @@ export class Grid {
     };
 
     this.#makeGridNodes();
-    this.#renderNodes(this.#gridNodes, BACKGROUND_COLOUR);
+    this.#renderNodes(this.#gridNodes, GRID_COLOUR);
   };
 
   #debouncedHandleResize = debounce(this.#handleResize, 500);

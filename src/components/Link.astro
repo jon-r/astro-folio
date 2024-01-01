@@ -4,9 +4,14 @@ interface Props {
 }
 
 const {to} = Astro.props;
+const isActive = Astro.url.pathname === to;
 
 ---
 
-<a class="ml-4 underline-offset-4 hover:text-green-400 hover:underline" href={to}>
-  <slot/>
-</a>
+<a
+    class:list={[
+      "ml-4 underline-offset-4 hover:text-green-300 hover:underline",
+      {'text-green-100 underline': isActive}
+    ]}
+    href={to}
+><slot/></a>

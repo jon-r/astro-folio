@@ -1,15 +1,15 @@
-import type {ApplesManager} from "./ApplesManager.js";
-import {BACKGROUND_COLOUR, SNAKE_HUES, type SnakeColours} from "./constants/colours.js";
-import {OPPOSITE_EDGES} from "./constants/grid.js";
-import {SnakeStatus} from "./constants/snake.js";
-import type {GridNode, GridNodeProps} from "./GridNode.js";
-import {IdMaker} from "./shared/IdMaker.js";
-import type {Logger} from "./shared/Logger.js";
-import type {Rng} from "./shared/Rng.js";
-import {Snake} from "./Snake.js";
-import type {GridNodeStarter} from "./types/grid.js";
-import type {SnakeSpawnProps} from "./types/snakes.js";
-import type {SnakesOptions} from "./types/config.js";
+import type { ApplesManager } from "./ApplesManager.js";
+import { GRID_COLOUR, SNAKE_HUES, type SnakeColours } from "./constants/colours.js";
+import { OPPOSITE_EDGES } from "./constants/grid.js";
+import { SnakeStatus } from "./constants/snake.js";
+import type { GridNode, GridNodeProps } from "./GridNode.js";
+import { IdMaker } from "./shared/IdMaker.js";
+import type { Logger } from "./shared/Logger.js";
+import type { Rng } from "./shared/Rng.js";
+import { Snake } from "./Snake.js";
+import type { SnakesOptions } from "./types/config.js";
+import type { GridNodeStarter } from "./types/grid.js";
+import type { SnakeSpawnProps } from "./types/snakes.js";
 
 interface SnakesManagerProps extends SnakesOptions {
   logger: Logger;
@@ -30,7 +30,7 @@ export class SnakesManager {
 
   add(availableNodes: GridNodeStarter[]) {
     const { max, spawnChance, rng } = this.#props;
-    const livingSnakes = this.#snakes.filter(snake => snake.status === SnakeStatus.Ok)
+    const livingSnakes = this.#snakes.filter(snake => snake.status === SnakeStatus.Ok);
     const willSpawn = livingSnakes.length < max && rng.flip(spawnChance);
 
     if (!willSpawn) {
@@ -45,8 +45,8 @@ export class SnakesManager {
     const hue = this.#props.rng.from(SNAKE_HUES);
 
     return {
-      head: `hsl(${hue},80%,15%)`,
-      body: `hsl(${hue},85%,10%)`,
+      head: `hsl(${hue},70%,25%)`,
+      body: `hsl(${hue},75%,20%)`,
     };
   };
 
@@ -97,7 +97,7 @@ export class SnakesManager {
       const entries: [color: string, node: GridNode[]][] = [
         [headColour, head ? [head] : []],
         [colours.body, body],
-        [BACKGROUND_COLOUR, end],
+        [GRID_COLOUR, end],
       ];
 
       entries.forEach(([colour, nodes]) => {

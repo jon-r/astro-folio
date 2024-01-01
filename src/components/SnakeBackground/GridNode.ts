@@ -1,8 +1,8 @@
-import {GRID_DIRECTION_VECTORS, GridDirection, NO_TURN_BIAS, POSSIBLE_DIRECTIONS} from "./constants/grid.js";
+import { isFactorOf } from "../../util/generics.ts";
+import { GRID_DIRECTION_VECTORS, GridDirection, NO_TURN_BIAS, POSSIBLE_DIRECTIONS } from "./constants/grid.js";
 import type { Rng } from "./shared/Rng.js";
+import type { GridOptions } from "./types/config.js";
 import type { GridDimensions, GridPoint } from "./types/grid.js";
-import type {GridOptions} from "./types/config.js";
-import {isFactorOf} from "../../util/generics.ts";
 
 export interface GridNodeProps extends GridOptions {
   rng: Rng;
@@ -46,11 +46,11 @@ export class GridNode {
   #getIsCrossPoint([x, y]: GridPoint, spacing: number) {
     const isFactor = isFactorOf(spacing);
 
-    return isFactor(x) && isFactor(y)
+    return isFactor(x) && isFactor(y);
   }
 
   #getNextDirection(currentDirection: GridDirection) {
-    const { rng} = this.#props
+    const { rng } = this.#props;
 
     if (!this.isCrossPoint) {
       return currentDirection;
