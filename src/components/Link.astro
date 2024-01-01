@@ -3,9 +3,8 @@ interface Props {
   to: string;
 }
 
-const {to} = Astro.props;
+const { to } = Astro.props;
 const isActive = Astro.url.pathname === to;
-
 ---
 
 <a
