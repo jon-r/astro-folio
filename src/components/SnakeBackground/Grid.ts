@@ -116,7 +116,7 @@ export class Grid {
 
   #manageApples() {
     const availableNodes = this.#gridNodes
-      .filter(gridNode => !gridNode.isWithin(this.#snakes.activeNodes));
+      .filter(gridNode => gridNode.isCrossPoint && !gridNode.isWithin(this.#snakes.activeNodes));
     const appleToRender = this.#apples.add(availableNodes);
 
     if (!appleToRender) {

@@ -14,6 +14,7 @@ export class GridNode {
 
   readonly id: string;
   readonly startDirection: GridDirection | null;
+  readonly isCrossPoint: boolean;
 
   constructor(
     readonly point: GridPoint,
@@ -21,6 +22,7 @@ export class GridNode {
   ) {
     this.#props = props;
     this.startDirection = this.#getStartDirection(point, props.dimensions);
+    this.isCrossPoint = this.#getIsCrossPoint(point, props.spacing);
     this.id = point.toString();
   }
 
@@ -41,12 +43,16 @@ export class GridNode {
     return null;
   }
 
-  #getNextDirection(currentDirection: GridDirection) {
-    const {spacing, rng} = this.#props
-    const [x,y] = this.point;
+  #getIsCrossPoint([x, y]: GridPoint, spacing: number) {
     const isFactor = isFactorOf(spacing);
 
-    if (!isFactor(x) || !isFactor(y)) {
+    return isFactor(x) && isFactor(y)
+  }
+
+  #getNextDirection(currentDirection: GridDirection) {
+    const { rng} = this.#props
+
+    if (!this.isCrossPoint) {
       return currentDirection;
     }
 

@@ -38,5 +38,5 @@ export function isNotUndefined<T>(item: T | undefined): item is T {
 }
 
 export function isFactorOf(target: number) {
-  return (value: number) => value && !(value % target);
+  return (value: number) => value > 0 && !(value % target);
 }

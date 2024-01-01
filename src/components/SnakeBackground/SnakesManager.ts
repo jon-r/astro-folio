@@ -1,14 +1,14 @@
-import type { ApplesManager } from "./ApplesManager.js";
-import { BACKGROUND_COLOUR, SNAKE_HUES, type SnakeColours } from "./constants/colours.js";
-import { OPPOSITE_EDGES } from "./constants/grid.js";
-import { SnakeStatus } from "./constants/snake.js";
-import type { GridNode, GridNodeProps } from "./GridNode.js";
-import { IdMaker } from "./shared/IdMaker.js";
-import type { Logger } from "./shared/Logger.js";
-import type { Rng } from "./shared/Rng.js";
-import { Snake } from "./Snake.js";
-import type { GridNodeStarter } from "./types/grid.js";
-import type { SnakeSpawnProps } from "./types/snakes.js";
+import type {ApplesManager} from "./ApplesManager.js";
+import {BACKGROUND_COLOUR, SNAKE_HUES, type SnakeColours} from "./constants/colours.js";
+import {OPPOSITE_EDGES} from "./constants/grid.js";
+import {SnakeStatus} from "./constants/snake.js";
+import type {GridNode, GridNodeProps} from "./GridNode.js";
+import {IdMaker} from "./shared/IdMaker.js";
+import type {Logger} from "./shared/Logger.js";
+import type {Rng} from "./shared/Rng.js";
+import {Snake} from "./Snake.js";
+import type {GridNodeStarter} from "./types/grid.js";
+import type {SnakeSpawnProps} from "./types/snakes.js";
 import type {SnakesOptions} from "./types/config.js";
 
 interface SnakesManagerProps extends SnakesOptions {
@@ -30,7 +30,8 @@ export class SnakesManager {
 
   add(availableNodes: GridNodeStarter[]) {
     const { max, spawnChance, rng } = this.#props;
-    const willSpawn = this.#snakes.length < max && rng.flip(spawnChance);
+    const livingSnakes = this.#snakes.filter(snake => snake.status === SnakeStatus.Ok)
+    const willSpawn = livingSnakes.length < max && rng.flip(spawnChance);
 
     if (!willSpawn) {
       return;
