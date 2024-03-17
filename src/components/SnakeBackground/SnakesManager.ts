@@ -45,8 +45,9 @@ export class SnakesManager {
     const hue = this.#props.rng.from(SNAKE_HUES);
 
     return {
-      head: `hsl(${hue},70%,25%)`,
-      body: `hsl(${hue},75%,20%)`,
+      head: `hsl(${hue},60%,40%)`,
+      body1: `hsl(${hue},75%,20%)`,
+      body2: `hsl(${hue},80%,15%)`,
     };
   };
 
@@ -91,12 +92,16 @@ export class SnakesManager {
       snake.moveSnake(nodeProps);
 
       const { head, body, colours, end } = snake.getSnakeAsParts();
+      activeNodes.push(...body);activeNodes.push(...body);
 
-      const headColour = snake.status === SnakeStatus.Dying ? colours.body : colours.head;
+      const headColour = snake.status === SnakeStatus.Dying ? colours.body1 : colours.head;
+
+      const body1 = body.splice(0, body.length - 3);
 
       const entries: [color: string, node: GridNode[]][] = [
         [headColour, head ? [head] : []],
-        [colours.body, body],
+        [colours.body1, body1],
+        [colours.body2, body],
         [GRID_COLOUR, end],
       ];
 
@@ -104,8 +109,6 @@ export class SnakesManager {
         const existingNodes = rendered[colour] || [];
         rendered[colour] = [...existingNodes, ...nodes];
       });
-
-      activeNodes.push(...body);
     });
 
     this.activeNodes = activeNodes;
