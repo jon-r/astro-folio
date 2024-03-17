@@ -1,4 +1,4 @@
-import { debounce, isFactorOf } from "../../util/generics.js";
+import { debounce, isFactorOf } from "./util/generics.js";
 import { ApplesManager } from "./ApplesManager.js";
 import { APPLE_COLOUR, GRID_COLOUR } from "./constants/colours.js";
 import { GridNode, type GridNodeProps } from "./GridNode.js";
@@ -73,7 +73,7 @@ export class Grid {
     this.#ticker.addEventListener("tick", this.#handleTick);
     addEventListener("resize", this.#debouncedHandleResize);
     this.#handleResize();
-    this.#renderPauseButton();
+    // this.#renderPauseButton();
     if (autoplay) {
       this.#start();
     }
@@ -92,13 +92,13 @@ export class Grid {
     this.#manageSnakes();
   };
 
+  // @ts-expect-error - disabled
   #renderPauseButton = () => {
     const pauseButton = document.createElement("button");
     pauseButton.addEventListener("click", () => this.#togglePause());
     pauseButton.innerText = "Pause Snakes";
     pauseButton.setAttribute("type", "button");
 
-    // todo more styles once the app is styles a bit more
     pauseButton.classList.add("absolute", "top-4", "right-4");
     document.body.appendChild(pauseButton);
   };

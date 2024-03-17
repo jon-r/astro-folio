@@ -1,4 +1,4 @@
-import { isFactorOf } from "../../util/generics.ts";
+import { isFactorOf } from "./util/generics.js";
 import { GRID_DIRECTION_VECTORS, GridDirection, NO_TURN_BIAS, POSSIBLE_DIRECTIONS } from "./constants/grid.js";
 import type { Rng } from "./shared/Rng.js";
 import type { GridOptions } from "./types/config.js";
