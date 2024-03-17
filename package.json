@@ -12,15 +12,15 @@
     "prettify": "dprint fmt"
   },
   "dependencies": {
-    "@astrojs/mdx": "^2.0.3",
-    "@astrojs/react": "^3.0.7",
-    "@astrojs/tailwind": "^5.0.4",
-    "astro": "^4.0.6",
-    "tailwindcss": "^3.4.0"
+    "@astrojs/mdx": "^2.2.0",
+    "@astrojs/react": "^3.1.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.5.5",
+    "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
-    "@types/node": "^20.10.4",
-    "dprint": "^0.43.2",
-    "typescript": "^5.3.3"
+    "@types/node": "^20.11.28",
+    "dprint": "^0.45.0",
+    "typescript": "^5.4.2"
   }
 }

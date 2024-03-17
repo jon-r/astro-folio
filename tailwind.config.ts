@@ -23,6 +23,8 @@ export default {
           600: "#043333",
           700: "#202121",
         },
+        black: "#000",
+        grey: "#333",
       },
     },
     container: {
