@@ -1,6 +1,6 @@
 ---
 import { ViewTransitions } from "astro:transitions";
-import '@fontsource-variable/josefin-sans';
+import "@fontsource-variable/josefin-sans";
 
 import SideBar from "../components/SideBar.astro";
 import SnakeBackground from "../components/SnakeBackground/index.astro";
@@ -9,7 +9,7 @@ export interface Props {
   title: string;
 }
 
-const year = new Date().getFullYear()
+const year = new Date().getFullYear();
 
 const { title } = Astro.props;
 ---
@@ -25,7 +25,7 @@ const { title } = Astro.props;
     <ViewTransitions />
   </head>
   <body class="bg-green-700 flex h-screen text-green-200 font-normal">
-    <SnakeBackground/>
+    <SnakeBackground />
     <SideBar />
 
     <main class="p-16 overflow-y-auto flex-1 bg-black/50">

@@ -8,10 +8,10 @@ const isActive = Astro.url.pathname === to;
 ---
 
 <a
-    class:list={[
-      "ml-4 underline-offset-4 hover:text-green-300 hover:underline",
-      {'text-green-100 underline': isActive}
-    ]}
-    href={to}
-    data-astro-prefetch
-><slot/></a>
+  class:list={[
+    "ml-4 underline-offset-4 hover:text-green-300 hover:underline",
+    { "text-green-100 underline": isActive },
+  ]}
+  href={to}
+  data-astro-prefetch
+><slot /></a>

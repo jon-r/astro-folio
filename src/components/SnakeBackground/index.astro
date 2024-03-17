@@ -1,25 +1,26 @@
 ---
+
 ---
 
 <canvas id="snakes" class="fixed -z-10 inset-0"></canvas>
 
 <script>
-  import {GRID_CONFIG} from "./GridOptions.js";
+import { GRID_CONFIG } from "./GridOptions.js";
 
-  const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  async function initSnakes() {
-    const htmlElement = document.getElementById("snakes");
+async function initSnakes() {
+  const htmlElement = document.getElementById("snakes");
 
-    const {Grid} = await import("./Grid.js");
+  const { Grid } = await import("./Grid.js");
 
-    if (htmlElement instanceof HTMLCanvasElement) {
-      new Grid(htmlElement, {config: GRID_CONFIG}).init();
-    }
+  if (htmlElement instanceof HTMLCanvasElement) {
+    new Grid(htmlElement, { config: GRID_CONFIG }).init();
   }
+}
 
-  if (!mediaQuery?.matches) {
-    window.addEventListener("load", initSnakes);
-    document.addEventListener("astro:page-load", initSnakes);
-  }
+if (!mediaQuery?.matches) {
+  window.addEventListener("load", initSnakes);
+  document.addEventListener("astro:page-load", initSnakes);
+}
 </script>

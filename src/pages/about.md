@@ -118,11 +118,11 @@ from scratch. Training new apprentices with the content management system.
 #### _**2009 -** A Levels_
 
 | Maths A | Physics B | Graphic Design C |   |
-|:--------|:----------|:-----------------|---|
+| :------ | :-------- | :--------------- | - |
 
 #### _**2007 -** GCSE’s_
 
 12 A*-C grades, including:
 
 | Maths A* | Physics A | Graphic Design A | ICT A |
-|:---------|:----------|:-----------------|:------|
+| :------- | :-------- | :--------------- | :---- |
