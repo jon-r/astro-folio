@@ -1,10 +1,12 @@
 ---
 import { Image } from "astro:assets";
+
 import Link from "./Link.astro";
 
 import logo from "../assets/logo.svg";
 import email from "../assets/email.svg";
 import linkedin from "../assets/linkedin.svg";
+import github from "../assets/github.svg";
 ---
 
 <aside class="relative bg-green-500/50 backdrop-blur-sm w-20 px-2 py-6 flex flex-col justify-between shadow-xl">
@@ -19,12 +21,15 @@ import linkedin from "../assets/linkedin.svg";
     </div>
   </nav>
 
-  <div class="w-1/2 flex flex-col gap-2 self-center">
+  <div class="w-1/2 flex flex-col gap-3 self-center">
     <a class="flex-1" href="mailto:Jon.Richards@outlook.com">
       <Image class="w-full" src={email} alt="Jon.Richards@outlook.com"/>
     </a>
     <a class="flex-1" href="https://linkedin.com/in/jon-r90">
       <Image class="w-full" src={linkedin} alt="linkedin.com/in/jon-r90"/>
+    </a>
+    <a class="flex-1" href="https://github.com/jon-r/astro-folio">
+      <Image class="w-full" src={github} alt="github.com/jon-r/astro-folio"/>
     </a>
   </div>
 </aside>
