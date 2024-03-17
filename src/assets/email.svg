@@ -4,5 +4,5 @@
         <rect x="8" y="11" height="14" width="20" rx="2"/>
         <path stroke="#fff" d="M8 11l10 10 10-10" fill="none"/>
     </mask>
-    <circle cx="18" cy="18" r="16" mask="url(#d)" fill="#b2dfdb"/>
+    <circle cx="18" cy="18" r="16" mask="url(#d)" fill="#00897B"/>
 </svg>

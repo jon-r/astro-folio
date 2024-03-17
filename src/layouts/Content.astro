@@ -17,7 +17,7 @@ const { frontmatter } = Astro.props satisfies Props;
   <section
     class="relative max-w-4xl mx-auto shadow-md rounded-md border-l-8 border-green-400"
   >
-    <header class="bg-green-600/75 text-green-200 p-8 rounded-tr-md">
+    <header class="bg-green-600/75 text-green-200 p-4 md:p-8 rounded-tr-md">
       <h1 class="font-display text-5xl font-bold">{frontmatter.title}</h1>
       {
         frontmatter.linkText && (
@@ -32,7 +32,7 @@ const { frontmatter } = Astro.props satisfies Props;
       }
     </header>
     <article
-      class="mb-12 md:mb-0 relative content bg-green-100 text-green-700 p-8 rounded-br-md z-10"
+      class="mb-12 md:mb-0 relative content bg-green-100 text-green-700 p-4 md:p-8 rounded-br-md z-10"
     >
       <slot />
     </article>
@@ -87,11 +87,11 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(tr) {
-      @apply flex justify-evenly;
+      @apply flex justify-evenly flex-wrap md:flex-nowrap;
     }
 
     :global(th) {
-      @apply flex-1;
+      @apply basis-1/2 md:flex-1;
     }
 
     :global(a) {
