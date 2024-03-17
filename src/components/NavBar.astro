@@ -10,14 +10,14 @@ import logo from "../assets/logo.svg";
 ---
 
 <aside
-  class="relative bg-green-500/50 backdrop-blur-sm w-20 px-2 py-6 flex flex-col justify-between shadow-xl"
+  class="relative bg-green-400 md:bg-green-500/50 backdrop-blur-sm md:w-20 p-2 md:py-6 flex md:flex-col justify-between shadow-xl"
 >
-  <nav>
+  <nav class="flex md:block items-center">
     <a href="/">
-      <Image class="w-full" src={logo} alt="Jon Richards" />
+      <Image class="w-12 md:w-full" src={logo} alt="Jon Richards" />
     </a>
     <div
-      class="font-display origin-bottom-left translate-x-3 rotate-90 w-max text-2xl"
+      class="font-display hidden md:block md:origin-bottom-left md:translate-x-3 md:rotate-90 md:w-max text-2xl"
     >
       <Link to="/">home</Link>
       <Link to="/about">about</Link>
@@ -25,7 +25,7 @@ import logo from "../assets/logo.svg";
     </div>
   </nav>
 
-  <div class="w-1/2 flex flex-col gap-3 self-center">
+  <div class="w-32 md:w-1/2 flex md:flex-col gap-3 self-center">
     <a class="flex-1" href="mailto:Jon.Richards@outlook.com">
       <Image class="w-full" src={email} alt="Jon.Richards@outlook.com" />
     </a>

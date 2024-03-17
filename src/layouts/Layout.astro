@@ -3,7 +3,7 @@ import { ViewTransitions } from "astro:transitions";
 import "@fontsource-variable/josefin-sans";
 
 import MetaData from "../components/MetaData.astro";
-import SideBar from "../components/SideBar.astro";
+import NavBar from "../components/NavBar.astro";
 import SnakeBackground from "../components/SnakeBackground/index.astro";
 
 export interface Props {
@@ -22,11 +22,11 @@ const { title } = Astro.props satisfies Props;
 
     <ViewTransitions />
   </head>
-  <body class="bg-grey flex h-screen text-green-200 font-normal">
+  <body class="bg-grey flex flex-col md:flex-row h-screen text-green-200 font-normal">
     <SnakeBackground />
-    <SideBar />
+    <NavBar />
 
-    <main class="p-16 overflow-y-auto flex-1">
+    <main class="p-4 md:p-16 overflow-y-auto flex-1">
       <slot />
     </main>
   </body>
