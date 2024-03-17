@@ -12,8 +12,8 @@ type Props = MarkdownLayoutProps<{
 const { frontmatter } = Astro.props satisfies Props;
 ---
 <Layout title={`Jon Richards - ${frontmatter.title}`}>
-    <section class="relative max-w-4xl mx-auto shadow-md rounded-md">
-      <header class="bg-green-600/75 text-green-200 p-8 rounded-t-md border-b-8 border-current">
+    <section class="relative max-w-4xl mx-auto shadow-md rounded-md border-l-8 border-green-400">
+      <header class="bg-green-600/75 text-green-200 p-8 rounded-tr-md ">
         <h1 class="text-5xl font-bold">{frontmatter.title}</h1>
         {frontmatter.linkText && (
             <a class="hover:text-green-300 hover:underline text-xl" href={frontmatter.linkPath} download >
@@ -21,9 +21,9 @@ const { frontmatter } = Astro.props satisfies Props;
             </a>
         )}
       </header>
-      <div class="content bg-green-100 text-green-700 p-8 rounded-b-md">
+      <article class="content bg-green-100 text-green-700 p-8 rounded-br-md ">
         <slot/>
-      </div>
+      </article>
     </section>
 </Layout>
 
@@ -38,7 +38,11 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(h2) {
-      @apply border-b-2 border-green-300
+      @apply border-b-2 border-green-300;
+    }
+
+    :global(h2:not(:first-of-type)) {
+      @apply mt-6;
     }
 
     :global(h3) {

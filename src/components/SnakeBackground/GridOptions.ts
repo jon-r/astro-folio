@@ -10,7 +10,7 @@ export const GRID_CONFIG: GridConfig = {
   },
   snakes: {
     speedMs: 1000 / 40,
-    max: 1,
+    max: 2,
     startingLength: 30,
     spawnChance: 10,
   },
