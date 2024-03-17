@@ -46,8 +46,7 @@ export class SnakesManager {
 
     return {
       head: `hsl(${hue},70%,30%)`,
-      body1: `hsl(${hue},80%,15%)`,
-      body2: `hsl(${hue},90%,10%)`,
+      body: `hsl(${hue},80%,15%)`,
     };
   };
 
@@ -92,16 +91,13 @@ export class SnakesManager {
       snake.moveSnake(nodeProps);
 
       const { head, body, colours, end } = snake.getSnakeAsParts();
-      activeNodes.push(...body);activeNodes.push(...body);
+      activeNodes.push(...body);
 
-      const headColour = snake.status === SnakeStatus.Dying ? colours.body1 : colours.head;
-
-      const body1 = body.splice(0, body.length - 5);
+      const headColour = snake.status === SnakeStatus.Dying ? colours.body : colours.head;
 
       const entries: [color: string, node: GridNode[]][] = [
         [headColour, head ? [head] : []],
-        [colours.body1, body1],
-        [colours.body2, body],
+        [colours.body, body],
         [GRID_COLOUR, end],
       ];
 
