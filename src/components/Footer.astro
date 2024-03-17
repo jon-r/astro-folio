@@ -1,0 +1,22 @@
+---
+import { Image } from "astro:assets";
+
+import logoClose from "../assets/logo-close.svg";
+
+const year = new Date().getFullYear();
+---
+
+<footer
+  class="p-4 text-green-500 absolute text-sm flex justify-end items-end gap-2 bottom-0 left-0 w-full"
+>
+  <span>
+    &copy; {year} Jon Richards | Built with
+    <a
+      class="hover:text-green-300 underline"
+      href="https://astro.build/"
+      target="_blank"
+      rel="noopener"
+    >Astro</a>
+  </span>
+  <Image class="w-16" src={logoClose} alt="github.com/jon-r/astro-folio" />
+</footer>

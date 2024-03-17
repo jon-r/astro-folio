@@ -1,7 +1,9 @@
 ---
 import type { MarkdownLayoutProps } from "astro";
+import { Image } from "astro:assets";
 
 import Layout from "./Layout.astro";
+import Footer from "../components/Footer.astro";
 
 type Props = MarkdownLayoutProps<{
   title: string;
@@ -29,10 +31,11 @@ const { frontmatter } = Astro.props satisfies Props;
         )
       }
     </header>
-    <article class="content bg-green-100 text-green-700 p-8 rounded-br-md">
+    <article class="relative content bg-green-100 text-green-700 p-8 rounded-br-md z-10">
       <slot />
     </article>
   </section>
+  <Footer />
 </Layout>
 
 <style>
@@ -62,7 +65,7 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(hr) {
-      @apply border-current
+      @apply border-current;
     }
 
     :global(h4) {
@@ -70,7 +73,7 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(ul) {
-      @apply list-disc list-inside
+      @apply list-disc list-inside;
     }
 
     :global(p,ul,table) {
@@ -78,11 +81,11 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(table,thead,tr) {
-      @apply w-full
+      @apply w-full;
     }
 
     :global(tr) {
-      @apply flex justify-evenly
+      @apply flex justify-evenly;
     }
 
     :global(th) {
@@ -90,7 +93,7 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(a) {
-      @apply text-green-400 hover:text-green-300 hover:underline
+      @apply text-green-400 hover:text-green-300 hover:underline;
     }
   }
 </style>
