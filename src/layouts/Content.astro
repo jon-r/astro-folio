@@ -14,7 +14,7 @@ const { frontmatter } = Astro.props satisfies Props;
 <Layout title={`Jon Richards - ${frontmatter.title}`}>
     <section class="relative max-w-4xl mx-auto shadow-md rounded-md border-l-8 border-green-400">
       <header class="bg-green-600/75 text-green-200 p-8 rounded-tr-md ">
-        <h1 class="text-5xl font-bold">{frontmatter.title}</h1>
+        <h1 class="font-display text-5xl font-bold">{frontmatter.title}</h1>
         {frontmatter.linkText && (
             <a class="hover:text-green-300 hover:underline text-xl" href={frontmatter.linkPath} download >
               {frontmatter.linkText}
@@ -33,6 +33,10 @@ const { frontmatter } = Astro.props satisfies Props;
       @apply font-bold;
     }
 
+    :global(h2,h3,h4,h5) {
+      @apply font-display;
+    }
+
     :global(h2,h3) {
       @apply text-2xl mb-3;
     }
@@ -42,7 +46,7 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(h2:not(:first-of-type)) {
-      @apply mt-6;
+      @apply mt-8;
     }
 
     :global(h3) {
@@ -62,7 +66,7 @@ const { frontmatter } = Astro.props satisfies Props;
     }
 
     :global(p,ul,table) {
-      @apply mb-4;
+      @apply mb-6;
     }
 
     :global(table,thead,tr) {

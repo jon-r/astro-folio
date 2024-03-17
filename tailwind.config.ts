@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
   content: [
@@ -7,8 +8,11 @@ export default {
 
   theme: {
     fontWeight: {
-      normal: "300",
+      normal: "400",
       bold: "700",
+    },
+    fontFamily: {
+      display: ["'Josefin Sans Variable'", ...defaultTheme.fontFamily.sans],
     },
 
     extend: {
@@ -29,9 +33,6 @@ export default {
     container: {
       padding: "2rem",
       center: true,
-    },
-    fontFamily: {
-      sans: ["soleil", "sans-serif"],
     },
   },
   plugins: [],

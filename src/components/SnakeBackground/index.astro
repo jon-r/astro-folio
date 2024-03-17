@@ -8,15 +8,18 @@
 
   const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  async function initSnakes() {
+    const htmlElement = document.getElementById("snakes");
+
+    const {Grid} = await import("./Grid.js");
+
+    if (htmlElement instanceof HTMLCanvasElement) {
+      new Grid(htmlElement, {config: GRID_CONFIG}).init();
+    }
+  }
+
   if (!mediaQuery?.matches) {
-    window.addEventListener("load", async () => {
-      const htmlElement = document.getElementById("snakes");
-
-      const {Grid} = await import("./Grid.js");
-
-      if (htmlElement instanceof HTMLCanvasElement) {
-        new Grid(htmlElement, {config: GRID_CONFIG}).init();
-      }
-    });
+    window.addEventListener("load", initSnakes);
+    document.addEventListener("astro:page-load", initSnakes);
   }
 </script>
