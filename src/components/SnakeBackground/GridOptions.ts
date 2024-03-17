@@ -15,7 +15,7 @@ export const GRID_CONFIG: GridConfig = {
     spawnChance: 10,
   },
   apples: {
-    max: 20,
-    spawnChance: 5,
+    max: 4,
+    spawnChance: 2,
   },
 };

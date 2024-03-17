@@ -7,7 +7,7 @@
 <script>
 import { GRID_CONFIG } from "./GridOptions.js";
 
-const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 400px)");
 
 async function initSnakes() {
   const htmlElement = document.getElementById("snakes");
