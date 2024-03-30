@@ -16,13 +16,23 @@ const { frontmatter } = Astro.props satisfies Props;
 <Layout title={`Jon Richards - ${frontmatter.title}`}>
   <section
     class="relative max-w-4xl mx-auto shadow-md rounded-md border-l-8 border-green-400"
+    transition:name="page"
   >
-    <header class="bg-green-600/75 text-green-200 p-4 md:p-8 rounded-tr-md">
-      <h1 class="font-display text-5xl font-bold">{frontmatter.title}</h1>
+    <header
+      class="bg-green-600/75 p-4 md:p-8 rounded-tr-md"
+      transition:name="header"
+    >
+      <h1
+        class="font-display text-5xl font-bold text-green-300"
+        transition:name="title"
+      >
+        {frontmatter.title}
+      </h1>
       {
         frontmatter.linkText && (
+          <hr class="w-48 mt-2 block border-b-2 border-green-300" />
           <a
-            class="hover:text-green-300 hover:underline text-xl"
+            class="text-green-200 hover:text-green-300 hover:underline text-xl"
             href={frontmatter.linkPath}
             download
           >
@@ -32,7 +42,7 @@ const { frontmatter } = Astro.props satisfies Props;
       }
     </header>
     <article
-      class="mb-12 md:mb-0 relative content bg-green-100 text-green-700 p-4 md:p-8 rounded-br-md z-10"
+      class="mb-12 md:mb-0 relative content bg-green-100 text-green-700 p-4 md:p-8 rounded-br-md"
     >
       <slot />
     </article>

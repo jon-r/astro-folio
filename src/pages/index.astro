@@ -5,18 +5,28 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Jon Richards - Web Developer">
-  <header
-    class="font-display sm:absolute sm:right-8 sm:bottom-16 md:right-32 md:bottom-32 bg-green-600/75 border-l-8 border-green-400 md:text-right mt-12 p-4 md:p-6 rounded-md shadow-xl"
+  <section
+    class="sm:absolute sm:right-8 sm:bottom-16 md:right-32 md:bottom-32 border-l-8 border-green-400 mt-12 rounded-md shadow-xl"
+    transition:name="page"
   >
-    <h1 class="font-bold text-5xl md:text-7xl text-green-300">Jon Richards</h1>
-    <h3 class="text:2xl md:text-3xl">Team Lead / Senior Web Developer</h3>
+    <header
+      class="font-display bg-green-600/75 md:text-right p-4 md:p-6 rounded-r-md"
+      transition:name="header"
+    >
+      <h1
+        class="font-bold text-5xl md:text-7xl text-green-300"
+        transition:name="title"
+      >
+        Jon Richards
+      </h1>
+      <h3 class="text:2xl md:text-3xl">Team Lead / Senior Web Developer</h3>
 
-    <hr class="w-48 mt-2 inline-block border-b-2 border-green-300" />
+      <hr class="w-48 mt-2 inline-block border-b-2 border-green-300" />
 
-    <nav>
-      <Link to="/about">about</Link>
-      {/* <Link to="/demos">demos</Link> */}
-    </nav>
-  </header>
+      <nav>
+        <Link to="/about">about</Link>
+      </nav>
+    </header>
+  </section>
   <Footer />
 </Layout>
