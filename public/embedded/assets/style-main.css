@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Raleway:wght@200..600&display=swap");
 
 main {
+  background-color: white;
   position: relative;
   font-family: "Raleway", sans-serif;
   font-size: 11pt;
@@ -128,6 +129,7 @@ header {
     font-size: 0.8rem;
 
     & strong {
+      font-weight: 600;
       font-size: 1.1rem;
     }
 
