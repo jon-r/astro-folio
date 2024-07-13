@@ -1,0 +1,53 @@
+---
+
+import Footer from "../components/Footer.astro";
+import Layout from "../layouts/Layout.astro";
+import Link from "../components/Link.astro";
+
+---
+
+<Layout title="Jon Richards - About Me">
+  <section
+      class="relative max-w-4xl mx-auto shadow-md rounded-md border-l-8 border-green-400"
+      transition:name="page"
+  >
+    <header
+        class="bg-green-600/75 p-4 md:p-8 rounded-tr-md"
+        transition:name="header"
+    >
+      <h1
+          class="font-display text-5xl font-bold text-green-300"
+          transition:name="title"
+      >
+        About Me
+      </h1>
+
+      <hr class="w-48 mt-2 block border-b-2 border-green-300" />
+
+      <p class="text-xl">
+        Download CV
+        <a
+          class="text-green-200 hover:text-green-300 hover:underline "
+          href="/JonR-CV_Feb24.pdf"
+          download
+        >
+          (pdf)
+        </a>
+
+        |
+
+        <a
+            class="text-green-200 hover:text-green-300 hover:underline text-xl"
+            href="/embedded/cv"
+        >(html)</a>
+      </p>
+
+    </header>
+    <article
+        class="mb-12 md:mb-0 relative h-[58cm] overflow-y-hidden bg-green-100 text-green-700 rounded-br-md"
+    >
+      <iframe id="container" src="/embedded/cv" class="w-full h-full m-0" scrolling="no"></iframe>
+    </article>
+  </section>
+  <Footer />
+</Layout>

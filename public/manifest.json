@@ -2,6 +2,5 @@
   "name": "Jon-R Web Developer",
   "theme_color": "#00897b",
   "background_color": "#00897b",
-  "start_url": "https://jon-richards.com/",
   "display": "standalone"
 }

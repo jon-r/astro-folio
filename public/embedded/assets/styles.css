@@ -1,0 +1,35 @@
+/* todo styles for print/not print */
+
+@media screen {
+  .page {
+    box-shadow: 0 0 5px #ddd;
+    /*inset 0 0 0 1cm rgb(146 223 111 / 10%);*/
+    margin: auto;
+
+    /* using printable dimensions, then rems in the inner styles */
+    max-width: 21cm;
+    min-height: 59.4cm;
+    background-repeat: repeat-y;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='red' width='21cm' height='29.7cm' %3E%3Cline x1='0' x2='100%' y1='100%' y2='100%' /%3E%3C/svg%3E%0A");
+  }
+
+  /*.page-break {*/
+  /*  display: none;*/
+  /*  visibility: hidden;*/
+  /*}*/
+}
+
+@media print {
+  .style-select {
+    display: none;
+    visibility: hidden;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  @page {
+    margin: 0 !important;
+  }
+}
